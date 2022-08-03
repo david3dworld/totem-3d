@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-home {
+    background-image: url(../images//bgHome.png);
+}
+
+.bg-storm {
+    background-image: url(../images/bg-storm.png);
+}
+
+.bg-jeep {
+    border-radius: 16px;
+    width: 194px;
+    background: #161A42;
+}
+
+.bg-collections {
+    background: #161A42;
+    border-radius: 16px;
+    height: 271px;
+    width: 194px;
+}
+
+.bg-collection {
+    background-position: center center;
+}
+
+@media (max-width : 1024px) {
+    .bg-home {
+        height: 343px;
+    }
+
+    .bg-collection {
+        background-position: left;
+    }
+
+    .product-img {
+        width: 431px
+    }
+}
+
+.overlay {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.549);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 2;
+    left: 0;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    background-color: rgb(13, 15, 35);
+}
+
+#__next {
+    display: flex;
+    min-height: 100%;
+    width: 100%;
+    justify-content: center;
+}
+
+.ld {
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+    display: inline-block;
+    box-sizing: content-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1em;
+    height: 1em;
+    margin: -0.5em;
+    z-index: 1;
+    transition: all .3s;
+    transition-timing-function: ease-in;
+    animation: ld-spin 1s infinite linear;
+}
+
+.ld-ring:after {
+    content: " ";
+    display: block;
+    width: 2em;
+    height: 2em;
+    box-sizing: border-box;
+    transform-origin: 0 0;
+    transform: translateZ(0) scale(0.5);
+    backface-visibility: hidden;
+    border-radius: 50%;
+    border: 0.3em solid currentColor;
+    border-left-color: transparent;
+}
+
+@keyframes ld-spin {
+    0% {
+        animation-timing-function: cubic-bezier(0.5856, 0.0703, 0.4143, 0.9297);
+        transform: rotate(0)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+.loading-bar {
+    position: relative;
+}
+
+.loading-bar::before {
+    content: "";
+    position: absolute;
+    left: calc(50% - 45px);
+    top: calc(50% - 45px);
+    width: 90px;
+    height: 90px;
+    background-image: url('/LOADING_LOOP.gif');
+    background-size: contain;
+    /* border: 3px solid #000; */
+    border-radius: 50%;
+    z-index: 10;
+    /* border-right: 0; */
+    transition: all .3s;
+}
+
+.category {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #161A42 0% 0% no-repeat padding-box;
+    border: 2px solid #2E357B;
+    position: absolute;
+    right: -3px;
+    bottom: -15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+} 
+.category .music{
+    width: 18px !important;
+}
+.category .movies{
+    width: 14px !important;
+}
+.category .games{
+    width: 20px !important;
+}
+.category .sports{
+    width: 19px !important;
+}
+.category .comics{
+    width: 19px !important;
+}
+.category .art{
+    width: 22px !important;
+}
+.copyright{
+    font-size: 10px;
+}
+.control-group {
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999999999;
+}
+
+.control__control-group {
+    height: 25px;
+    width: 25px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.control__control-group>img {
+    height: 100%;
+    width: 100%;
+}
+
+.control__control-group>img.reset {
+    height: 70%;
+    width: 70%;
+}
