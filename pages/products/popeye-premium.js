@@ -100,7 +100,7 @@ export default function PopeyePremium() {
       ]
   return (
     <div style={{ backgroundColor : "#0D0F23",color : "#919CC1",fontFamily:"Chakra Petch" }} className='text-sm flex flex-col items-center'>
-    <div className='w-4/5 '>
+    <div className='max-w-7xl'>
 
     <Navbar></Navbar>
 
@@ -245,19 +245,7 @@ export default function PopeyePremium() {
                       <p className='text-lg text-white'>{data.name}</p>
 
                       <div className='relative flex items-center mt-3'>
-                        {
-                            data.rare=="RARE" && <p style={{ color : "#7AF4AE" }}>{data.rare}</p> 
-                        }
-                                                {
-                            data.rare=="UNCOMMON" && <p style={{ color : "#ED5B62  " }}>{data.rare}</p>
-                        }
-                        {
-                            data.rare=="ULTRA RARE" && 
-                            <p style={{ color : "#F4D96C" }}>{data.rare}</p>
-                        }
-                                                                {
-                            data.rare=="COMMON" && <p className='text-white'>{data.rare}</p>
-                        }
+                        <p className='text-white'>{data.rare}</p>
                         <p className='absolute right-0 text-white'>Serie 1</p>
                       </div>
 
@@ -267,7 +255,7 @@ export default function PopeyePremium() {
                         <p style={{ color : "#0EA8D6" }} className='text-white text-2xl'>{data.cost}$</p>
                         <p style={{ color : "#0EA8D6" }} className='ml-1 text-lg '>25</p>
                         <Image src={polygon1}></Image>
-                        <p className='absolute right-0'>{data.divide}</p>
+                        <p className='absolute right-0'>{data?.productNo}/{data?.maxCap}</p>
                       </div>
                       
                       <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">

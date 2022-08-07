@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from "../navbar/index"
-import popeyeCollection2x from "../../images/popeyeCollection2x.png"
-import popeyeBlue from "../../images/popeyeBlue2x.png"
 import Image from 'next/image'
 import polygon1 from "../../images/polygon2x.png"
-import visa from "../../images/visa.png"
-import mastercard from "../../images/mastercard.png"
 import { useSelector } from 'react-redux'
 import Footer from '../footer'
 import Link from 'next/link'
@@ -74,32 +70,40 @@ export default function payment1() {
         }
     }
     const onCollect = async () => {
-        const data = product
-        const price = data.priceMatic
-        const finalParams = {
-            id: data.collectionId,
-            items: 1
-        }
+        try {
+            const data = product
+            const price = data.priceMatic
+            const finalParams = {
+                id: data.collectionId,
+                items: 1
+            }
 
-        let options = {
-            contractAddress: CONTRACT_ADDRESS,
-            functionName: "mint",
-            abi: TotemAbi,
-            msgValue: Moralis.Units.ETH(price),
-            // msgValue: 0.02,
-            params: finalParams
-        };
-        const message = await Moralis.executeFunction(options);
-        console.log("message on payment--->", message)
-        setTxId(message.hash)
-        setSuccess(true)
-        setPaymentMehtod(false)
-        // NotificationManager.success("Collection Success!")
+            let options = {
+                contractAddress: CONTRACT_ADDRESS,
+                functionName: "mint",
+                abi: TotemAbi,
+                msgValue: Moralis.Units.ETH(price),
+                // msgValue: 0.02,
+                params: finalParams
+            };
+            const message = await Moralis.executeFunction(options);
+            console.log("message on payment--->", message)
+            setTxId(message.hash)
+            setSuccess(true)
+            setPaymentMehtod(false)
+            // NotificationManager.success("Collection Success!")
+        } catch (err) {
+            if (err && err.message && err.message.includes('insufficient funds')) {
+                NotificationManager.error('Insufficient wallet balance')
+            } else {
+                NotificationManager.error('Something went wrong!')
+            }
+        }
     }
 
     return (
-        <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Chakra Petch" }} className='text-sm flex flex-col items-center'>
-            <div className='max-w-7xl'>
+        <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Chakra Petch" }} className='text-sm flex w-full flex-col items-center'>
+            <div className='max-w-7xl w-full'>
 
                 <Navbar></Navbar>
                 {!success ?

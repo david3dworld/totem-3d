@@ -1,17 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './navbar/index'
-import fireman from "../images/fireman.png"
-import games from "../images/games.png"
-import soccer from "../images/soccer.png"
-import music from "../images/music.png"
-import popeyePunch from "../images/popeyePunch.png"
-import art from "../images/art.png"
-import localMovies from "../images/localMovies.png"
-import gamepad from "../images/gamepad.png"
-import football from "../images/footballIcon.png"
-import musicIcon from "../images/musicIcon.png"
-import book from "../images/book.png"
-import artIcon from "../images/articon.png"
 import Image from 'next/image'
 import popeye from "../images/popeye@2x.png"
 import flash from "../images/flash_gordon@2x.png"
@@ -20,33 +8,7 @@ import stormStrooper from "../images/original_stormtrooper@2x.png"
 import group from "../images/Groupe 275@2x.png"
 import phantom from "../images/phantom@2x.png"
 import Footer from './footer'
-import facebook from "../images/facebook.png"
-import discord from "../images/discord.png"
-import twitter from "../images/twitter.png"
-import instagram from "../images/instagram.png"
-import intersection from "../images/Intersection1.png"
-import popeyeCollection from "../images/popeye-collection.png"
-import flashGordon from "../images/flash-gordon.png"
-import phantomCollection from "../images/phantom.png"
-import benficasc from "../images/benfica.png"
-import storm from "../images/storm.png"
-import bg1 from "../images/bg1.png"
-import bg2 from "../images/bg2.png"
-import bg3 from "../images/bg3.png"
-import bg4 from "../images/bg4.png"
-import bg5 from "../images/bg5.png"
-import popeyeGreen from "../images/popeyeGreen.png"
-import popeyeEnemy from "../images/popeyeEnemy.png"
-import phantomAnimal from "../images/phantomAnimal.png"
-import flashKing from "../images/flashKing.png"
-import food from "../images/food.png"
-import popeyeBlue from "../images/popeyeBlue.png"
-import totem from '../images/totem.png'
-import polygon from "../images/polygon-matic-logo.png"
 import { useRouter } from 'next/router'
-import phantomPurple from "../images/phantomPurple.png"
-import jeep from "../images/jeep.png"
-import polygon1 from "../images/polygon-matic-logo.png"
 import tsubasaBrands from "../images/tsubasaBrands.png"
 import kingBrands from "../images/kingBrands.png"
 import flashBrands from "../images/phantomBrands.png"
@@ -139,9 +101,9 @@ export default function brands() {
             <div className='max-w-7xl'>
                 <Navbar></Navbar>
 
-                <div className='mt-20 text-white'>
-                    <p className='text-4xl'>Brands</p>
-                    <p style={{ fontFamily: "Poppins" }} className='mt-5'>The future of pop culture is here. Now all of your favorite brands are available as digital assets for collection. The most iconic and popular brands have partnered with TOTEM to create unique, authentic, and officially licensed figurines for digital collection in the NFT market.</p>
+                <div className='mt-20 text-white px-6 lg:px-0'>
+                    <p className='text-5xl font-semibold'>Brands</p>
+                    <p style={{ fontFamily: "Poppins" }} className='mt-5 mb-10'>The future of pop culture is here. Now all of your favorite brands are available as digital assets for collection. The most iconic and popular brands have partnered with TOTEM to create unique, authentic, and officially licensed figurines for digital collection in the NFT market.</p>
                 </div>
 
                 <div className='flex items-center'>
@@ -149,18 +111,18 @@ export default function brands() {
                         <Skeleton containerClassName='flex justify-between lg:flex-row flex-col items-center' className='loading-bar' inline={true} count={4} height={'170px'} width={'150px'} />
                     </div>}
                 </div>
-                <div className='w-full mt-8 lg:px-20'>
-                    <Slider {...settingsBrands}>
+                <div className='w-full mt-8 flex flex-col md:grid lg:grid md:grid-cols-3 lg:grid-cols-4 gap-10 items-center '>
+                    {/* <Slider {...settingsBrands}> */}
                     {brands?.map(function (data, index) {
 
                         return (
-                            <div className=''>
-                            <div key={index} style={{ background: "#161A42", color: "#E0E3FF", width: "257px", height: "388px" }} className=' flex flex-col rounded-lg'>
-                                <div className='w-full h-full'>
+                            <div className='w-72 lg:w-80 px-4' key={index}>
+                            <div key={index} style={{ background: "#161A42", color: "#E0E3FF", height: "388px" }} className=' flex flex-col rounded-lg'>
+                                <div className='w-full h-full p-2-5'>
                                     <div style={{ borderRadius: '8px', overflow: 'hidden' }} className='w-full h-56 relative'>
-                                        <Image src={data.imageUrl}
+                                    {data?.brand_cover_image && <Image src={data?.brand_cover_image}
                                         layout="fill"
-                                        ></Image>
+                                        ></Image> }
                                     </div>
                                 </div>
                                 {/* <div className='mt-0 text-4xl flex items-center justify-center cursor-pointer mx-5'>
@@ -168,25 +130,25 @@ export default function brands() {
                                     <div>{data.remarks}</div>
 
                                 </div> */}
-                                <div className='w-40 h-40 text-center mx-auto mt-2'>
+                                <div className='w-full h-40 text-center mx-auto mt-2 px-3'>
                                     <div style={{ borderRadius: '8px', overflow: 'hidden' }} className='w-full h-full relative'>
-                                        <Image src={data.logoUrl}
+                                        {data?.brand_name_image && <Image src={data?.brand_name_image}
                                             width={238} height={228} objectFit="contain" layout='fill'
-                                        ></Image>
+                                        ></Image>}
                                     </div>
                                 </div>
-                                <div style={{ border: '2px solid #2E357B' }} className='w-full my-2'>
+                                <div style={{ border: '1px solid #2E357B' }} className='w-full my-2'>
                                 </div>
                                 <div onClick={function () {
                                     router.push(`/collection/${data._id}`);
-                                }} className=' hover:opacity-80 text-center flex justify-center items-center text-md w-full mb-5'>
-                                    <p className='m-2 cursor-pointer'>DISCOVER THE COLLECTIONS</p>
+                                }} className=' hover:opacity-80 text-center flex justify-center items-center w-full mb-5'>
+                                    <p className='m-2 cursor-pointer text-white text-sm '>DISCOVER THE COLLECTIONS</p>
                                 </div>
                             </div>
                             </div>
                         )
                     })}
-                    </Slider>
+                    {/* </Slider> */}
                 </div>
                 {/* <div className='flex items-center lg:grid lg:grid-cols-4 gap-12 mt-8 flex-col lg:flex-row'>
                     {thematics.map(function (data) {
@@ -219,10 +181,9 @@ export default function brands() {
                     })}
                 </div> */}
 
-                <div className='mt-20'>
+                <div className='mt-20 px-6 lg:px-0'>
+                    <Footer></Footer>
                 </div>
-
-                <Footer></Footer>
 
             </div>
         </div>

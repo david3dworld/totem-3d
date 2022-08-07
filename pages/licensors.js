@@ -45,7 +45,7 @@ export default function Licensors() {
   return (
     <>
     <div style={{ backgroundColor : "#0D0F23",color : "#919CC1",fontFamily:"Chakra Petch" }} className='text-sm flex flex-col items-center'>
-      <div className='w-4/5 '>
+      <div className='max-w-7xl'>
           <Navbar />
           <div className='mt-20 flex flex-col lg:flex-row'>
               <div className='text-white w-full'>
@@ -55,7 +55,7 @@ export default function Licensors() {
                 </div>
                 <div className='flex lg:justify-end justify-center'>
                 <div style={{ minHeight: 624, width: "100%", position: "relative" }}>
-                    <SingleModelView isHasBackground={false} zoom={120} isHasControl={false}/>
+                <SingleModelView isHasBackground={false} zoom={120} isHasControl={false} modelUrl={'/popeye.glb'}/>
                     </div>
                 </div>
               </div>

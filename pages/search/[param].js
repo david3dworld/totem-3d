@@ -73,7 +73,7 @@ export default function Home() {
         <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center lg:flex-row flex-col lg:grid grid-cols-5 gap-5'>
           {lastDrop2?.map(function (data, index) {
             return (
-              <Link href={`/payment/${data._id}`} key={index}>
+              <Link href={`/product/${data._id}`} key={index}>
                 <a>
                   <div style={{ width: "194px", background: "#161A42" }} className=''>
                     <div style={{ borderRadius: '8px' }} className=' bg-white m-2 relative'>
@@ -111,7 +111,7 @@ export default function Home() {
                         <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
                         <p style={{ color: "#0EA8D6" }} className='ml-1 text-lg '>{data.priceMatic}</p>
                         <Image src={polygon}></Image>
-                        <p className='absolute right-0'>{data.divide}</p>
+                        <p className='absolute right-0'>{data?.productNo}/{data?.maxCap}</p>
                       </div>
 
                       <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">

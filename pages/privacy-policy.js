@@ -5,7 +5,7 @@ import Navbar from './navbar'
 export default function privacyPolicy() {
   return (
     <div style={{ backgroundColor: "#0D0F23", color: "#919CC1" }} className='text-sm flex flex-col items-center w-full'>
-      <div className='w-4/5 '>
+      <div className='max-w-7xl'>
         <Navbar></Navbar>
         <div className='mt-20'>
             <p style={{ font : 'normal normal 600 45px/45px Chakra Petch' }} className='text-white'>PRIVACY POLICY</p>

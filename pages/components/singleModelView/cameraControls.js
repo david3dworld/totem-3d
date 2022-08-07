@@ -36,7 +36,7 @@ CameraControlsDefault.install({ THREE: subsetOfTHREE });
 extend({ CameraControlsDefault });
 
 // eslint-disable-next-line react/display-name
-export const CameraControls = forwardRef((_, ref) => {
+const CameraControls = forwardRef((_, ref) => {
 	const cameraControls = useRef(null);
 	const camera = useThree((state) => state.camera);
 	const renderer = useThree((state) => state.gl);
@@ -61,3 +61,5 @@ function mergeRefs(...refs) {
 		}
 	};
 }
+
+export default CameraControls

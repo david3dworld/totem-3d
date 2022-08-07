@@ -25,7 +25,7 @@ export default function Footer() {
                 }} src={totem}></Image>
             </div>
             <div className='flex items-start flex-col lg:flex-row overflow-hidden'>
-                <div className='lg:w-8/12 w-full flex items-start flex-col lg:flex-row relative bottom-2 '>
+                <div className='lg:w-8/12 w-full flex items-start flex-col lg:flex-row relative '>
                     <div className=''>
                         <p style={{ fontFamily: "Chakra Petch" }} className='text-xl text-white lg:w-96'>Collect…. Combine…enhance …</p>
                     </div>

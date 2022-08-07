@@ -90,8 +90,8 @@ export default function MyProfile() {
         finalImage = profileInfo?.profilepicture
     }
     return (
-        <div className='text-sm flex flex-col items-center' style={{ fontFamily: "Chakra Petch", backgroundColor: "#0D0F23", color: "#919CC1" }}>
-            <div className='w-4/5'>
+        <div className='text-sm flex flex-col w-full items-center' style={{ fontFamily: "Chakra Petch", backgroundColor: "#0D0F23", color: "#919CC1" }}>
+            <div className='max-w-7xl w-full'>
                 <Navbar></Navbar>
 
                 <div style={{ background: '#161A42 ', borderRadius: '16px' }} className='w-full mt-8 flex items-center lg:flex-row flex-col'>

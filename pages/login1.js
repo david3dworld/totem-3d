@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from "./navbar/index"
-import google from "../images/google2x.png"
 import fox from "../images/fox.png"
 import Image from 'next/image'
 import Footer from './footer'
@@ -52,10 +51,11 @@ export default function login1() {
         console.log(response);
       }
   return (
-    <div style={{ backgroundColor : "#0D0F23",color : "#919CC1" ,fontFamily : "Poppins"}} className='text-sm flex flex-col items-center'>
-    <div className='w-4/5 '>
+    <div style={{ backgroundColor : "#0D0F23",color : "#919CC1" ,fontFamily : "Poppins"}} className='text-sm flex w-full flex-col items-center'>
+    <div className='max-w-7xl w-full' >
         
         <Navbar></Navbar>
+        <ToastContainer />
 
     <div className='mt-20 flex justify-center items-center'>
         <div style={{ borderRadius: '26px',width:"525px" }} className='bg-white px-12 py-2 relative'>
@@ -91,7 +91,9 @@ export default function login1() {
                         }).then(function(data){
                             console.log(data);
                             toast.success("Registered");
-                            router.push("/");
+                            setTimeout(() => {
+                                router.push("/");
+                            }, 1000);
                         }).catch(function(error){
                             toast.error("Error");
                         })
@@ -102,7 +104,6 @@ export default function login1() {
             }} style={{borderRadius: '100px', background:"#161A42" }} className=' mr-4 cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4'>
                 <p>SIGN UP</p>
             </div>
-            <ToastContainer />
             <p>{emailError}</p>
             <div onClick={function(){
                 axios.post("https://shop.totem-universe.io/auth/email/login",{

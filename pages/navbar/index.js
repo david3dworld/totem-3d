@@ -9,9 +9,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import wallet from "../../images/Icon_Wallet.png"
 import { useMoralis } from 'react-moralis'
 import { logout } from '../../redux/authSlice'
-export default function navbar() {
+import AccountModal from './AccountModal'
+export default function NavBar() {
   const { isAuthenticated, authenticate, logout: moralisLogout, account,Moralis,user } = useMoralis();
-
+  const [isAccountSectionVisible, setAccountSectionVisiblity] = useState(false)
+  const onToggleAccount = () => setAccountSectionVisiblity(state => !state)
   const router = useRouter();
   const token = useSelector(function (state) {
     return state.token;
@@ -57,9 +59,19 @@ function checkWallet(){
     return result;
   }
 }
+  const onLogout = async () => {
+    if (account) {
+      await moralisLogout();
+      router.push('/');
+    } else {
+      dispatch(logout());
+      router.push('/');
+    }
+    onToggleAccount()
+  }
   return (
-    <div style={{ fontFamily: "Poppins" }} >
-      <nav style={{ color: "#919CC1", background: "#0D0F23" }}>
+    <div style={{ fontFamily: "Poppins" }}>
+      <nav style={{ color: "#919CC1", background: "#0D0F23" }} className='relative'>
         <div style={{ color: "#919CC1" }} className="max-w-7xl mx-auto px-2 lg:px-6 lg:px-8">
           <div className="relative flex items-center justify-between h-16">
             <div className="absolute inset-y-0 left-0 flex items-center lg:hidden">
@@ -105,11 +117,11 @@ function checkWallet(){
                   }} style={{ border: "1px solid  #2C3166" }} className=' hover:opacity-80 rounded-full cursor-pointer  py-1 px-2'>
                     <a href='#' className='m-1'>Brands</a>
                   </div>
-                  {/* <div onClick={function(){
-            router.push("categories");
-          }} style={{ border : "1px solid  #2C3166" }} className='rounded-full cursor-pointer  py-1 px-2'>
-          <a className='m-1'>Categories</a>
-          </div> */}
+                  <div onClick={function(){
+                    router.push("categories");
+                  }} style={{ border : "1px solid  #2C3166" }} className='rounded-full cursor-pointer  py-1 px-2'>
+                  <a className='m-1'>Categories</a>
+                  </div>
                   <div>
                     <div style={{ background: "#161A42" }} className='rounded-full w-72 h-10 flex items-center ml-2 '>
                       <form onSubmit={handleSubmit} className="flex items-center">
@@ -156,18 +168,22 @@ function checkWallet(){
                         dispatch(logout());
                         router.push('/');
                       }
-                    }} className='cursor-pointer hover:opacity-80 hidden lg:block  mr-3 '> <p className=''>{check()}, Log Out</p></div>
+                    }} className='cursor-pointer hover:opacity-80 hidden lg:block mr-3 '> <p className=''>{check()}, Log Out</p></div>
                     :
                     <div onClick={function () {
                       router.push("/login1");
                     }} className='  hover:opacity-80 cursor-pointer hidden lg:block  mr-3 '>
-                      <p className=''>login / sign up</p>
+                      <p>login / sign up</p>
                     </div>
                 }
                   <button type="button" className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span className="sr-only">Open user menu</span>
                     <div onClick={function () {
-                      router.push("/profile");
+                      if(account) {
+                        onToggleAccount()
+                      } else {
+                        router.push("/profile");
+                      }
                     }}>
                       <AccountCircleIcon fontSize='large' />
                     </div>
@@ -188,13 +204,12 @@ function checkWallet(){
                 router.push("/brands");
               }} className='m-1'>Brands</a>
             </div>
-            {/*}
             <div onClick={function () {
               router.push("/categories");
             }} style={{ border: "1px solid  #2C3166" }} className='rounded-full w-24 flex items-center justify-center '>
               <a className='m-1'>Categories</a>
             </div>
-          */}
+         
             <div style={{ background: "#161A42" }} className='rounded-full w-72 h-10 flex items-center '>
               <form onSubmit={handleSubmit} className="flex items-center">
                 <input placeholder='Search by brand, collection...'
@@ -234,8 +249,8 @@ function checkWallet(){
             }
           </div>
         </div>
+      <AccountModal isVisible={isAccountSectionVisible} onLogout={onLogout} />
       </nav>
-
     </div>
   )
 }

@@ -27,7 +27,6 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { Slide } from '@mui/material'
 import SingleModelView from '../components/singleModelView'
 
 import music from "../../images/Icon awesome-music.svg"
@@ -82,7 +81,7 @@ const settingsBrands = {
   dots: true,
   infinite: false,
   speed: 500,
-  slidesToShow: 5,
+  slidesToShow: 4,
   slidesToScroll: 3,
   responsive : [
     {
@@ -118,6 +117,7 @@ export default function Collection() {
   const [checked3, setChecked3] = useState(false);
   const [checked4, setChecked4] = useState(false);
   const [filters,setFilters] = useState([]);
+  const [isFiltersLoading, setFiltersLoading] = useState(true)
   const [totalMaxCap, setTotalMaxCap] = useState(0);
   const [totalRemaining, setTotalRemaining] = useState(0);
   const [tag,setTag] = useState("");
@@ -139,6 +139,7 @@ export default function Collection() {
       getProductsByBrandId(brandId, (error, res) => {
         if(res?.data) {
           setFilters(res.data.result)
+          setFiltersLoading(false)
           let totalMax = 0;
           let remainingTotal = 0
           res.data.result.length > 0 && res.data.result.map((item) => {
@@ -348,15 +349,16 @@ export default function Collection() {
   }
 
   return (
-    <div className='text-sm flex flex-col items-center' style={{ backgroundColor : "#0D0F23",color : "#919CC1",fontFamily:"Chakra Petch" }}>
-      <div className='max-w-7xl'>
+    <div className='text-sm flex flex-col items-center w-full' style={{ backgroundColor : "#0D0F23",color : "#919CC1",fontFamily:"Chakra Petch" }}>
+      <div className='max-w-7xl w-full'>
       <Navbar></Navbar>
 
     <div 
       style={{ backgroundSize:"cover", height: 383, backgroundImage:`url('${brand?.backgroundUrl}')`}}
-      className=' mt-10 p-5 lg:p-0 flex items-center lg:flex-row flex-col rounded-2xl bg-no-repeat bg-contain bg-center bg-collection'
+      className=' mt-10 p-5 lg:p-0 flex  flex-col rounded-2xl bg-no-repeat bg-contain bg-center bg-collection'
     >
-      <p className='w-2/5 lg:m-10 text-white mt-5 lg:mt-0'>{brand.description}</p>
+      <p className='lg:m-10 text-white mt-14 text-8xl font-bold'>{brand.heading}</p>
+      <p className='w-2/5 lg:m-10 text-white mt-5 lg:mt-0 text-sm line-height-24' style={{ fontFamily : "Poppins" }}>{brand.description}</p>
     </div>
 
   <div
@@ -436,9 +438,10 @@ export default function Collection() {
       </div>
     </div>
     <div className='flex items-center mt-16 '>
-      {filters.length == 0 && <div className='w-full'>
+      {!!isFiltersLoading && <div className='w-full'>
         <Skeleton containerClassName='flex justify-between' className='loading-bar' inline={true} count={4} height={'170px'} width={'150px'} />
       </div>}
+      {!isFiltersLoading && !filters.length && <p className='w-full text-center text-lg'>No NFT found</p>}
     </div>
 <div className='flex mt-16 lg:flex-row flex-col '>
     <div  style={{ 
@@ -516,47 +519,24 @@ export default function Collection() {
     <div className='mt-5 ml-5 lg:mt-0 w-full max-w-xs sm:max-w-md md:max-w-3xl lg:max-w-6xl '>
     <Slider  {...settingsBrands}>
         {filters?.map(function(data, index){
-          const renderRarity = () => {
-            let color
-            switch(data.rarity) {
-              case 'RARE': {
-                color = '#7AF4AE'
-                break;
-              }
-              case 'ULTRA RARE': {
-                color = '#F4D96C'
-                break;
-              }
-              case 'UNCOMMON': {
-                color = '#ED5B62'
-                break;
-              }
-              default: {
-                color = 'white'
-                break;
-              }
-            }
-            return <p style={{color}}>{data.rarity}</p>
-          }
+         
           return (
-            <div key={index}>
-            <Link href={`/payment/${data._id}`}>
+            <Link href={`/product/${data._id}`} key={index}>
               <a>
-                <div className=''>
-                <div style={{background:"#161A42" }} className='p-1 mt-0 w-full lg:w-max rounded-lg m-5'>
-                  <div style={{ borderRadius : '8px', width: 'fit-content' }} className='bg-white m-2'>
+                <div style={{background:"#161A42" }} className='p-1 mt-0 rounded-lg m-5'>
+                  <div style={{ borderRadius : '8px', width: 'fit-content' }} className='bg-white my-2 mx-auto'>
                     {/* <div className='relative top-2 left-2'>
                     <Image height={20} width={60} src={popeyeBlue} />
                     </div> */}
-                    <div  className='rounded overflow-hidden flex justify-center items-center'>
+                    <div  className='rounded flex justify-center items-center relative'>
                     {
                       (!loadingItems.find(item => item.index == index) || (loadingItems.find(item => item.index == index) && loadingItems.find(item => item.index == index).progress != 100)) && <div
-                      style={{ height: 200, width: widthItem, position: "relative" }}>
+                      style={{ height: 228, width: widthItem, position: "relative" }}>
                         <Image 
                           src={data.imageUrl} 
                           objectFit="cover" 
                           width={widthItem} 
-                          height={200} 
+                          height={228} 
                           alt={`${data.name}'s image`} 
                           onMouseEnter={(e) => onLoadItem(index, 0)}
                           onMouseOut={() => onRemoveLoadingItem(index)}/>
@@ -573,30 +553,38 @@ export default function Collection() {
                     }
                     {
                       !!loadingItems.find(item => item.index == index) && <div
-                      style={{ height: 200, width: widthItem, position: "relative", display: loadingItems.find(item => item.index == index).progress == 100 ? 'block' : 'none' }}
+                      style={{ height: 228, width: widthItem, position: "relative", display: loadingItems.find(item => item.index == index).progress == 100 ? 'block' : 'none' }}
                       onMouseEnter={(e) => onMouseEnter(e,index)}
                       onMouseMove={(e) => onMouseMove(e,index)}
                       onMouseOut={() => onMouseOut(index)}>
-                        <SingleModelView
-                          key={index}
-                          isHasControl={false}
-                          initCanvasConfig={{
-                            orthographic: true,
-                            shadows: true,
-                            orbitControls: {
+                          <SingleModelView
+                            key={index}
+                            isHasControl={false}
+                            initCanvasConfig={{
+                              orthographic: true,
+                              shadows: true,
+                              orbitControls: {
                                 enableZoom: false,
                                 enablePan: false,
                                 enableRotate: false,
                                 minPolarAngle: 0,
                                 maxPolarAngle: Math.PI
-                            },
-                          }}
-                          hoverRotateAngle={index == figureRotate.index ? figureRotate.rotate : 0}
-                          isShowProgress={true}
-                          index={index}
-                          onLoading={(index, progress) => onLoadingItem(index, progress, loadingItems)}
-                          modelUrl={data.image3D ? data.image3D : null}
-                        />
+                              },
+                            }}
+                            hoverRotateAngle={index == figureRotate.index ? figureRotate.rotate : 0}
+                            isShowProgress={true}
+                            index={index}
+                            onLoading={(index, progress) => onLoadingItem(index, progress, loadingItems)}
+                            modelUrl={data.image3D ? data.image3D : null}
+                            zoom={0}
+                            isFitZoom={true}
+                            padding={{
+                              paddingTop: 0.5,
+                              paddingLeft: 0,
+                              paddingBottom: 0.5,
+                              paddingRight: 0
+                            }}
+                          />
                       </div>
                     }
                     <div className='category'>
@@ -613,7 +601,7 @@ export default function Collection() {
                     <p className='text-lg text-white'>{data.name}</p>
 
                     <div className='relative flex items-center mt-3'>
-                      {renderRarity()}
+                      <p className='text-white'>{data?.scaracity}</p>
                       <p className='absolute right-0 text-white mb-2'>{data.series}</p>
                     </div>
 
@@ -631,10 +619,8 @@ export default function Collection() {
                     </div>
                   </div>
                 </div>
-                </div>
               </a>
             </Link>
-            </div>
           )
         })}
         </Slider>

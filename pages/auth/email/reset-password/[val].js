@@ -16,6 +16,7 @@ export default function ResetPassword() {
     const [cPasswordClass, setCPasswordClass] = useState('form-control');
     const [isCPasswordDirty, setIsCPasswordDirty] = useState(false);
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (isCPasswordDirty) {
             if (password === cPassword) {
@@ -34,7 +35,7 @@ export default function ResetPassword() {
     }
     return (
         <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Poppins" }} className='text-sm flex flex-col items-center'>
-            <div className='w-4/5 '>
+            <div className='max-w-7xl'>
                 <Navbar></Navbar>
                 <div className='mt-20 flex justify-center items-center'>
                     <div style={{ borderRadius: '26px', width: "525px" }} className='bg-white px-12 py-2 relative'>
@@ -60,6 +61,7 @@ export default function ResetPassword() {
                             <div className='flex items-center'>
                                 <ToastContainer />
                                 <button onClick={function () {
+                                    setLoading(true)
                                     axios.post(`https://shop.totem-universe.io/auth/email/reset-password/`, {
                                         "email": email,
                                         "newPassword": password,
@@ -71,6 +73,8 @@ export default function ResetPassword() {
                                         }
                                     }).then(function (data) {
                                         console.log(data);
+                                        setLoading(false)
+
                                         if (data.data.success) {
                                             toast.success("Password changes successfully");
                                             router.push('/')
@@ -79,6 +83,9 @@ export default function ResetPassword() {
                                             toast.error("Changing password is not successfull, please try again later");
                                         }
                                     }).catch(function (error) {
+
+                                        setLoading(false)
+
                                         if (error.response) {
                                             // Request made and server responded
                                             console.log(error.response.data);
@@ -92,10 +99,11 @@ export default function ResetPassword() {
                                             console.log('Error', error.message);
                                         }
                                     })
-                                }} style={{ borderRadius: '100px', background: "#161A42" }} 
-                                disabled={isCPasswordDirty}
-                                className=' ml-4 cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4'>
-                                    Reset password
+                                }} style={{ borderRadius: '100px', background: "#161A42" }}
+                                    disabled={isCPasswordDirty}
+                                    className='w-36 ml-4 cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4 relative h-7'>
+                                    {loading && <div className="ld ld-ring ld-spin text-white"></div>}
+                                    {!loading && 'Reset password'}
                                 </button>
                             </div>
 

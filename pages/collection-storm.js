@@ -328,7 +328,7 @@ background: '#161A42 0% 0% no-repeat padding-box',borderRadius: '16px' }} classN
                         <p style={{ color : "#0EA8D6" }} className='text-white text-2xl'>{data.cost}$</p>
                         <p style={{ color : "#0EA8D6" }} className='ml-1 text-lg '>25</p>
                         <Image src={polygon1}></Image>
-                        <p className='absolute right-0'>{data.divide}</p>
+                        <p className='absolute right-0'>{data?.productNo}/{data?.maxCap}</p>
                       </div>
                       
                       <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">

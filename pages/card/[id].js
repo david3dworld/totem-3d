@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from "../navbar/index"
-import popeyeCollection2x from "../../images/popeyeCollection2x.png"
-import popeyeBlue from "../../images/popeyeBlue2x.png"
 import Image from 'next/image'
-import polygon1 from "../../images/polygon2x.png"
 import visa from "../../images/visa.png"
 import mastercard from "../../images/mastercard.png"
 import Footer from '../footer'

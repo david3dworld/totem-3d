@@ -2,19 +2,11 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navbar from "./navbar/index"
-import popeye from "../images/popeye@2x.png"
-import flash from "../images/flash_gordon@2x.png"
-import benfica from "../images/benfica@2x.png"
+
 import TotemAbi from '../contracts/TotemABI.json'
-import stormStrooper from "../images/original_stormtrooper@2x.png"
-import group from "../images/Groupe 275@2x.png"
-import phantom from "../images/phantom@2x.png"
+
 import Footer from './footer'
-import facebook from "../images/facebook.png"
-import discord from "../images/discord.png"
-import twitter from "../images/twitter.png"
-import instagram from "../images/instagram.png"
-import intersection from "../images/Intersection1.png"
+
 import popeyeCollection from "../images/popeye-collection.png"
 import flashGordon from "../images/flash-gordon.png"
 import phantomCollection from "../images/phantom.png"
@@ -25,17 +17,9 @@ import bg2 from "../images/bg2.png"
 import bg3 from "../images/bg3.png"
 import bg4 from "../images/bg4.png"
 import bg5 from "../images/bg5.png"
-import popeyeGreen from "../images/popeyeGreen.png"
-import popeyeEnemy from "../images/popeyeEnemy.png"
-import phantomAnimal from "../images/phantomAnimal.png"
-import flashKing from "../images/flashKing.png"
-import food from "../images/food.png"
-import popeyeBlue from "../images/popeyeBlue.png"
-import totem from '../images/totem.png'
+
 import polygon from "../images/polygon-matic-logo.png"
 import { useRouter } from 'next/router'
-import phantomPurple from "../images/phantomPurple.png"
-import popeyeHome from "../images/popeyeHome.png"
 import { useEffect, useState } from 'react'
 import CONTRACT from '../contracts/totem.json'
 import useWeb3Modal from '../hooks/useWeb3Modal'
@@ -50,7 +34,6 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import book2x from "../images/book2x.png"
 import music from "../images/Icon awesome-music.svg"
 import movies from "../images/Icon material-local-movies.svg"
 import games from "../images/Icon metro-gamepad.svg"
@@ -95,6 +78,7 @@ export default function Home() {
       {
         breakpoint: 480,
         settings: {
+          variableWidth: true,
           slidesToShow: 1,
           slidesToScroll: 1
         }
@@ -161,6 +145,7 @@ export default function Home() {
       {
         breakpoint: 480,
         settings: {
+          variableWidth: true,
           slidesToShow: 1,
           slidesToScroll: 1
         }
@@ -170,8 +155,7 @@ export default function Home() {
   useEffect(() => {
     axios.get("https://shop.totem-universe.io/product?&onSale=true", {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${JSON.parse(JSON.parse(localStorage['persist:root']).token)}`
+        'Content-Type': 'application/json'
       }
     }).then(function (data) {
       console.log('data', data);
@@ -182,8 +166,7 @@ export default function Home() {
     })
     axios.get("https://shop.totem-universe.io/brand", {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${JSON.parse(JSON.parse(localStorage['persist:root']).token)}`
+        'Content-Type': 'application/json'
       }
     }).then(function (data) {
       setCollections(data.data)
@@ -288,62 +271,60 @@ export default function Home() {
         </div>
 
            
-        <div className='mt-10 text-white'>
-          <p style={{ fontFamily: "Chakra Petch" }} className='text-xl '>The collections</p>
-        </div>
+        <p style={{ fontFamily: "Chakra Petch" }} className='text-xl mt-10 text-white mx-4 lg:mx-0'>The collections</p>
         <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center'>
           {collections.length == 0 && <div className='w-full'>
           <Skeleton containerClassName='flex justify-between lg:flex-row flex-col items-center' className='loading-bar' inline={true} count={5} height={'170px'}  width={'150px'} />
           </div>}
         </div>
-        <div style={{ height:"271px" }} className='mt-5 lg:px-12'>
+        <div className='mt-5 mx-8'>
         <Slider {...settingsBrands}>
           {collections?.map(function (data, index) {
-
             return (
-              <div className=''>
-              <div key={index} onClick={function () { router.push(`/collection/${data._id}`); }} style={{borderRadius: '16px',height:"271px", width: "194px", background: "#161A42" }} className=' flex items-start justify-start flex-col cursor-pointer bg-collections'>
-                <div className='w-full flex flex-col h-full relative'>
-                  <div className='w-full h-full'>
-                    <div style={{borderRadius: '16px', overflow: 'hidden'}} className='w-full h-52 relative'>
-                      <Image src={data.imageUrl}
-                        objectFit="cover" layout='fill'
-                      ></Image>
+              <div key={index} style={{ width: 210 }}>
+                <div
+                  onClick={function () { router.push(`/collection/${data._id}`); }}
+                  style={{borderRadius: '16px', height:"271px", width: "194px", background: "#161A42" }}
+                  className='flex items-start justify-start flex-col cursor-pointer bg-collections'
+                >
+                  <div className='w-full flex flex-col h-full relative'>
+                    <div className='w-full h-full'>
+                      <div style={{borderRadius: '16px', overflow: 'hidden'}} className='w-full h-52 relative'>
+                        <Image src={data.imageUrl}
+                          objectFit="cover" layout='fill'
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className='h-2'></div>
-                  <div className='w-40 h-40 text-center mx-auto'>
-                     <div style={{ borderRadius: '8px', overflow: 'hidden' }} className='h-full w-full relative'>
-                      <Image objectFit='contain' width={100} height={50}
-                       src={data.logoUrl} ></Image>
+                    <div className='h-2'></div>
+                    <div className='w-40 h-40 text-center mx-auto'>
+                      <div style={{ borderRadius: '8px', overflow: 'hidden' }} className='h-full w-full relative'>
+                        <Image objectFit='contain' width={100} height={50}
+                        src={data.logoUrl} ></Image>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              </div>
             )
-
           })}
           </Slider>
         </div>
 
-        <div className='text-white mt-20'>
-          <p style={{ fontFamily: "Chakra Petch" }} className='text-xl' id="lastdrops">Last Drops</p>
-        </div>
+          <p style={{ fontFamily: "Chakra Petch" }} className='text-xl text-white mt-20 mx-4 lg:mx-0' id="lastdrops">Last Drops</p>
         <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center'>
           {lastDrop2.length == 0 && <div className='w-full'>
           <Skeleton containerClassName='flex justify-between lg:flex-row flex-col items-center' className='loading-bar' inline={true} count={5} height={'170px'}  width={'150px'} />
           </div>}
         </div>
 
-        <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 lg:px-12'>
+        <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 px-8'>
         <Slider {...settingsLastdrop}>
           {lastDrop2.length > 0 && lastDrop2?.map(function (data, index) {
             console.log("data in lastdrop2-->")
             
             if (data && data.mintedCount >= data.maxCap) {
               return (
-                <div className='flex items-center justify-center' key={index}>
+                <div className='flex items-center justify-center' style={{ width: 200 }} key={index}>
                 <div className='p-1 bg-jeep '  onClick={() => checkForRemainedAmount(data)}>
                   <div style={{ borderRadius: '8px' }} className=' bg-white m-2'>
                     <div className=' top-2 left-2'>
@@ -367,34 +348,11 @@ export default function Home() {
                     </div>
                   </div>
                   <div className='p-3'>          
-                    <p className='text-lg text-white'>{data.name}</p>
+                    <p className='text-lg text-white line-clamp-2 h-14'>{data.name}</p>
 
                     <div className='relative flex items-center mt-3'>
-                      {
-                        data.rarity == "ULTRA RARE" &&
-                      <p style={{ color: "#F4D96C" }}>{data?.rarity}</p>
-            }
-            {
-                      data.rarity == "UNCOMMON" && 
-                      <p style={{ color: "#ED5B62" }}>{data?.rarity}</p>
-            }
-                        {
-                      data.rarity == "RARE" && 
-                      <p style={{ color: "#7AF4AE" }}>{data?.rarity}</p>
-            }
-                        {
-                      data.rarity == "COMMON" && 
-                      <p style={{ color: "#E7E7E7" }}>{data?.rarity}</p>
-            }
-            {
-              (data?.rarity != "COMMON" && data?.rarity != "UNCOMMON" && data?.rarity != "ULTRA RARE" && data?.rarity != "RARE") &&
-              <p>{data?.rarity}</p>
-            }
-            {
-              !data?.rarity && 
-              <p>-</p>
-            }
-
+                     
+                      <p className=' text-white'>{data?.scaracity}</p>
                       <p className='absolute right-0 text-white'>{data?.series}</p>
                     </div>
 
@@ -402,9 +360,9 @@ export default function Home() {
                     </div>
                     <div style={{ fontFamily: "Poppins" }} className='flex items-center relative mt-4'>
                       <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
-                      <p style={{ color: "#0EA8D6" }} className='ml-1 text-lg '>{data.priceMatic}</p>
+                      <p style={{ color: "#0EA8D6" }} className='ml-1 text-xs'>{data.priceMatic}</p>
                       <Image src={polygon}></Image>
-                      <p style={{color : "#E0E3FF"}} className='absolute right-0'>{data?.productNo} / {data?.maxCap}</p>
+                      <p style={{color : "#E0E3FF"}} className='absolute right-0 text-[10px]'>{data?.productNo} / {data?.maxCap}</p>
                     </div>
 
                     <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
@@ -420,7 +378,7 @@ export default function Home() {
               return (
                 <Link href={`/product/${data._id}`} key={index}>
                   <a>
-                    <div className='p-1 ' style={{borderRadius:"16px", width: "194px", background: "#161A42" }}>
+                    <div className='p-1 mx-2' style={{borderRadius:"16px", width: "194px",  background: "#161A42" }}>
                       <div style={{ borderRadius: '8px' }} className=' bg-white m-2'>
                         <div className='relative top-2 left-2'>
                           {/* <Image height={20} width={60} src={data.title}></Image> */}
@@ -443,34 +401,10 @@ export default function Home() {
                         </div>
                       </div>
                       <div className='p-3'>
-                        <p className='text-lg text-white'>{data.name}</p>
+                        <p className='text-lg text-white line-clamp-2 h-14'>{data.name}</p>
 
                         <div className='relative flex items-center mt-3'>
-                        {
-                        data.rarity == "ULTRA RARE" &&
-                      <p style={{ color: "#F4D96C" }}>{data?.rarity}</p>
-            }
-            {
-                      data.rarity == "UNCOMMON" && 
-                      <p style={{ color: "#ED5B62" }}>{data?.rarity}</p>
-            }
-                        {
-                      data.rarity == "RARE" && 
-                      <p style={{ color: "#7AF4AE" }}>{data?.rarity}</p>
-            }
-                        {
-                      data.rarity == "COMMON" && 
-                      <p style={{ color: "#E7E7E7" }}>{data?.rarity}</p>
-            }
-            {
-              (data?.rarity != "COMMON" && data?.rarity != "UNCOMMON" && data?.rarity != "ULTRA RARE" && data?.rarity != "RARE") &&
-              <p>{data?.rarity}</p>
-            }
-            {
-              !data?.rarity && 
-              <p>-</p>
-            }
-
+                          <p className='text-white'>{data?.scaracity}</p>
                           <p className='absolute right-0 text-white'>{data?.series}</p>
                         </div>
 
@@ -478,9 +412,9 @@ export default function Home() {
                         </div>
                         <div style={{ fontFamily: "Poppins" }} className='flex items-center relative mt-4'>
                           <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
-                          <p style={{ color: "#0EA8D6" }} className='ml-1 text-lg '>{data.priceMatic}</p>
-                          <Image src={polygon}></Image>
-                          <p style={{color : "#E0E3FF"}} className='absolute right-0'>{data?.productNo} / {data?.maxCap}</p>
+                          <p style={{ color: "#0EA8D6" }} className='ml-2 text-xs'>{data.priceMatic}</p>
+                          <Image src={polygon} />
+                          <p style={{color : "#E0E3FF"}} className='absolute right-0 text-[10px]'>{data?.productNo} / {data?.maxCap}</p>
                         </div>
 
                         <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
@@ -538,7 +472,7 @@ export default function Home() {
                     <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.cost}$</p>
                     <p style={{ color: "#0EA8D6" }} className='ml-1 text-lg '>25</p>
                     <Image src={polygon}></Image>
-                    <p className='absolute right-0'>{data.divide}</p>
+                    <p className='absolute right-0'>{data?.productNo}/{data?.maxCap}</p>
                   </div>
 
                   <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
@@ -567,17 +501,17 @@ export default function Home() {
         </div>
 
         <div>
-          <p style={{ fontFamily: 'Chakra Petch' }} className='text-white text-xl mt-5'>Our brands</p>
+          <p style={{ fontFamily: 'Chakra Petch' }} className='text-white text-xl mt-5 mx-4 lg:mx-0'>Our brands</p>
         </div>
 
 
 
-        <div className='lg:px-12'>
+        <div className='px-12'>
           <Slider {...settingsBrands}>
             {collections?.map(function (data, index) {
               return checkURLisValid(data.logoUrl) && (
                 <Link href={`/collection/${data._id}`} key={index}>
-                  <div key={index} className='m-5 cursor-pointer flex justify-center items-center'>
+                  <div key={index} style={{height:"271px", width: "194px"}} className='m-5 h-96 cursor-pointer flex justify-center items-center'>
                     <div className='w-full relative'>
                       <Image src={data.logoUrl}
                         width="95%" height="95%" layout="responsive" objectFit="contain"

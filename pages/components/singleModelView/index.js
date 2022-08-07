@@ -5,7 +5,8 @@ import {
     useGLTF,
     OrbitControls,
     Html,
-    useCamera
+    useCamera,
+    Bounds
 } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import {
@@ -16,28 +17,71 @@ import {
     useRef,
     useState,
 } from "react";
-import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager } from "three";
+import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding } from "three";
 import Image from 'next/image'
 import ResetIcon from '../../../images/stop-359-1180646.png'
 import RotateIcon from '../../../images/rotate-icon-5-removebg-preview.png'
 import MultiImageIcon from '../../../images/MultiImageIcon.png'
-import { CameraControls } from "./cameraControls";
+import CameraControls from "./cameraControls";
 import RemoveBGIcon from '../../../images/remove-bg.png'
+import ReactLoading from 'react-loading';
 
 const figureConfig = {
     defaultScale: 0.35,
     addMaxScale: 0.2,
     addStepScale: 0.02
 }
+
 const ControlGroup = ({group, isRotate}) => {
 
     useFrame(() => {
         if(isRotate) {
             if(group){
-                group.rotation.y += Math.PI/300
+                group.rotation.y -= Math.PI/300
             }
         }
     })
+
+    // function getAllMeshes(parent, visibleOnly = false) {
+    //     let meshes = [];
+    //     if (parent.children && parent.children.length > 0) {
+    //       for (let child of parent.children) {
+    //         if (child.isMesh) {
+    //           if (!visibleOnly || (visibleOnly && child.visible)) {
+    //             meshes.push(child);
+    //           }
+    //         }
+    //         if (child.children && child.children.length > 0) {
+    //           let childMeshes = getAllMeshes(child, visibleOnly);
+    //           meshes.push(...childMeshes);
+    //         }
+    //       }
+    //     }
+    //     return meshes;
+    //   }
+
+    //   function fitCameraToObject(controls, sceneMeshes, fitToVisibleOnly = false) {
+
+    //     sceneMeshes.updateMatrixWorld()
+    //     const box = new Box3();
+
+    //     let objects = getAllMeshes(sceneMeshes, fitToVisibleOnly);
+
+    //     if(objects.length === 0){
+    //         return;
+    //     }
+
+    //     for (const object of objects){
+    //         box.expandByObject(object);
+    //     }
+    //     control.fitToBox(box, false, padding);
+    //     control.saveState();
+    // }
+
+    // useEffect(() => {
+    //     if(!control || !fitZoom || !group) return;
+    //     fitCameraToObject(control, group, padding, true);
+    // }, [fitZoom, control, group])
 
     return null;
 }
@@ -72,7 +116,7 @@ const Background = ({base64}) => {
   }
 
 const SingleModelView = ({
-    modelUrl = "/popeye.glb",
+    modelUrl = "",
     isHasBackground = true,
     zoom = 50,
     radius = '',
@@ -92,13 +136,27 @@ const SingleModelView = ({
     isShowProgress = false,
     onLoading,
     index,
-    allowChangeBackground = true
+    allowChangeBackground = true,
+    isFitZoom = false,
+    padding = {
+        paddingTop: 0,
+        paddingLeft: 0,
+        paddingBottom: 0,
+        paddingRight: 0
+    }
     }) => {
-    const [models, setModels] = useState(null);
+    // const [models, setModels] = useState(null);
     const inputUploadFile = useRef();
     const [backgroundBase64, setBackgroundBase64] = useState(null)
     const loadingProgress = useRef(0);
-    const cameraRef = useRef();
+    const cameraRef = useRef(null);
+    const [showModal, setShowModal] = useState(false);
+    const [loadedPercent, setLoadedPercent] = useState(0);
+    const [itemGroup, setItemGroup] = useState(null);
+    const [canvasConfig, setCanvasConfig] = useState(initCanvasConfig);
+    const controlRef = useRef();
+    const groupRef = useRef();
+    const [isRotate, setIsRotate] = useState(false);
 
     const loadModel = (url) => {
         return new Promise(resolve => {
@@ -109,6 +167,7 @@ const SingleModelView = ({
             manager.onProgress = function ( item, loaded, total ){
                 if(loaded != 1) {
                     loadingProgress.current = (loaded / total * 100).toFixed(0);
+                    setLoadedPercent((loaded / total * 100).toFixed(0));
                     if(onLoading) {
                         if(loadingProgress.current == 100) {
                             setTimeout(() => {
@@ -121,25 +180,34 @@ const SingleModelView = ({
                     }
                 }
             };
-
-            
             const loader = new GLTFLoader(manager)
-            loader.load(url, function(data){
+            loader.load(url, function (data) {
                 data.scene.traverse((o) => {
                     if (o.isMesh) {
-                        o.material.roughness = 0.4
+                        o.material.roughness = 1.4
                         o.material.transparent = true;
                         o.material.opacity = 0.1;
                         o.material.flatShading = false;
+                        o.material.envMapIntensity = 0.1
+                        o.position.set(0,o.position.y,0)
+                        if (o.name.toLowerCase().includes('pod')) {
+                            o.receiveShadow = true;
+                        }
+                        else {
+                            o.castShadow = true;
+                        }
                     }
                 });
-                data.scene.userData = {...data.scene.userData, name: url}
+                data.scene.userData = { ...data.scene.userData, name: url }
                 resolve(data.scene)
             })
         })
     }
 
     useEffect(() => {
+        setLoadedPercent(0);
+        // setModels(null);
+        setItemGroup(null);
         if(modelUrl != null) {
             loadModel(modelUrl).then(models => {
             
@@ -151,7 +219,7 @@ const SingleModelView = ({
                         o.material.opacity = 1;
                     }
                 });
-                setModels([models])
+                // setModels([models])
                 onSelectModel(models)
             })
         }
@@ -159,15 +227,70 @@ const SingleModelView = ({
 
     useEffect(() => {
         if(groupRef.current) {
-            groupRef.current.rotation.y = hoverRotateAngle;
+            groupRef.current.rotation.set(0,hoverRotateAngle,0)
         }
-    }, [hoverRotateAngle])
+    }, [hoverRotateAngle, groupRef])
 
-    const [itemGroup, setItemGroup] = useState(null);
-    const [canvasConfig, setCanvasConfig] = useState(initCanvasConfig);
-    const controlRef = useRef();
-    const groupRef = useRef();
-    const [isRotate, setIsRotate] = useState(false);
+    useEffect(() => {
+        if(cameraRef.current && initCanvasConfig) {
+            if(!initCanvasConfig.orbitControls.enableZoom 
+                && !initCanvasConfig.orbitControls.enableRotate
+                && !initCanvasConfig.orbitControls.enablePan) {
+                cameraRef.current.enabled = false;
+            }
+        }
+    }, [cameraRef, initCanvasConfig])
+
+    const itvRef = useRef();
+
+    useEffect(() => {
+        if(itemGroup) {
+            itvRef.current = setInterval(() => {
+                if(!isFitZoom || !cameraRef || !cameraRef.current) return;
+                clearInterval(itvRef.current);
+                setTimeout(() => {
+                    fitCameraToObject(cameraRef.current, itemGroup, padding, true);
+                }, 500);
+            }, 100)
+        }
+    }, [itemGroup])
+
+    function getAllMeshes(parent, visibleOnly = false) {
+        let meshes = [];
+        if (parent.children && parent.children.length > 0) {
+          for (let child of parent.children) {
+            if (child.isMesh) {
+              if (!visibleOnly || (visibleOnly && child.visible)) {
+                meshes.push(child);
+              }
+            }
+            if (child.children && child.children.length > 0) {
+              let childMeshes = getAllMeshes(child, visibleOnly);
+              meshes.push(...childMeshes);
+            }
+          }
+        }
+        return meshes;
+      }
+
+      function fitCameraToObject(controls, sceneMeshes, fitToVisibleOnly = false) {
+
+        console.log("ZO ne")
+        sceneMeshes.updateMatrixWorld()
+        const box = new Box3();
+
+        let objects = getAllMeshes(sceneMeshes, fitToVisibleOnly);
+
+        if(objects.length === 0){
+            return;
+        }
+
+        for (const object of objects){
+            box.expandByObject(object);
+        }
+        controls.fitToBox(box, false, padding);
+        controls.saveState();
+    }
 
     const onSelectModel = (object) => {
         if (itemGroup) {
@@ -192,7 +315,7 @@ const SingleModelView = ({
         }
 
         if(controlRef.current) {
-            cameraRef.current.reset(true);
+            cameraRef.current.reset(false);
             controlRef.current.reset();
         }
     }
@@ -232,44 +355,39 @@ const SingleModelView = ({
                 {
                     isHasBackground && <color attach="background" args={["white"]} />
                 }
-                <ambientLight intensity={0.06} />
+                {/* <ambientLight intensity={0.06} /> */}
                 <hemisphereLight
-                    intensity={0.7}
+                    intensity={0.15}
                     angle={0.1}
                     penumbra={1}
                     position={[10, 15, 10]}
                 />
-                <spotLight
-                    intensity={1}
-                    angle={0.1}
-                    penumbra={1}
-                    position={[10, 15, 10]}
-                    castShadow
-                />
+                <directionalLight intensity={0.6} position={[0.6, 1, 1.2]} castShadow={true}/>
                 <Background base64={backgroundBase64} />
                 {modelUrl != null && itemGroup && (
-                    <mesh
-                    ref={groupRef}
-                     position={new Vector3(0, -2, 0)}
-                        scale={new Vector3(figureConfig.defaultScale + figureConfig.addMaxScale, figureConfig.defaultScale + figureConfig.addMaxScale, figureConfig.defaultScale + figureConfig.addMaxScale)}>
-                        <primitive
-                            object={itemGroup}
-                            position={new Vector3(0, 0, 0)}
-                        />
-                    </mesh>
-                )}
+                        <mesh
+                            ref={groupRef}
+                            position={new Vector3(0, -2, 0)}
+                            scale={new Vector3(figureConfig.defaultScale + figureConfig.addMaxScale, figureConfig.defaultScale + figureConfig.addMaxScale, figureConfig.defaultScale + figureConfig.addMaxScale)}>
+                            <primitive
+                                object={itemGroup}
+                                position={new Vector3(0, 0, 0)}
+                            />
+                        </mesh>
+                    )}
                 {
-                   (modelUrl != null && itemGroup) && <ControlGroup group={groupRef.current} isRotate={isRotate}/>
+                   (modelUrl != null && itemGroup) && <ControlGroup 
+                    group={groupRef.current} 
+                    isRotate={isRotate}/>
                 }
-                 {
-                   (modelUrl != null && itemGroup) && <CameraControls ref={cameraRef}/>
-                }
-                {/* <Environment
-                    files={"envTexturepng.hdr"}
-                    preset={null}
-                    encoding={sRGBEncoding} /> */}
+               <CameraControls ref={cameraRef}/>
+                    <Environment
+                    background={false}
+                    files={'simple_strongrim_symetric_key_a-_2_.hdr'}
+                    path={'/'}
+                />
                 {/* <ContactShadows
-                    position={[0, -0.8, 0]}
+                    position={[0, 0.5, 0]}
                     opacity={0.25}
                     scale={10}
                     blur={1.5}
@@ -288,17 +406,20 @@ const SingleModelView = ({
                (modelUrl != null && isHasControl && itemGroup) && <div
                     className="control-group"
                 >
-                    {
+                    {/* {
                         backgroundBase64 &&
                         <div className="control__control-group" onClick={onRemoveBg}>
                             <Image className="reset" alt="" src={RemoveBGIcon} style={{ opacity: 0.3 }} />
                         </div>
-                    }
-                    <div className="control__control-group" onClick={onResetGroup}>
+                    } */}
+                    <div className="control__control-group" onClick={onResetGroup} style={{margin: 0}}>
                         <Image className="reset" alt="" src={ResetIcon} style={{opacity: 0.3}}/>
                     </div>
                     {
-                        allowChangeBackground && <div className="control__control-group" onClick={upLoadIconClick}>
+                        allowChangeBackground && <div className="control__control-group"
+                        //  onClick={upLoadIconClick}
+                        onClick={() => setShowModal(true)}
+                         >
                             <Image className="reset" alt="" src={MultiImageIcon} style={{ opacity: 0.3 }} />
                         </div>
                     }
@@ -307,6 +428,59 @@ const SingleModelView = ({
                         <Image alt="" src={RotateIcon} style={{opacity: 0.3}}/>
                     </div>
                 </div>
+            }
+            {
+                !itemGroup && <div className="loading-spin__container" style={{ borderRadius: radius }}>
+                    {/* {
+                        modelUrl && <><ReactLoading type={'bars'} color={'black'} height={'20%'} width={'20%'} />
+                            <div>{`${loadedPercent}%`}</div></>
+                    } */}
+                    {
+                        modelUrl && <div className="loading-spin__img" style={{ border: radius }}></div>
+                    }
+                    {
+                        !modelUrl && <div>No item</div>
+                    }
+                    
+                </div>
+            }
+            {
+                showModal && <>
+                <div style={{
+                width: '100%',
+                height: '100%',
+                zIndex: 3,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                background: 'white',
+                borderRadius: radius,
+                opacity: 0.5,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+            </div>
+            <div style={{
+                width: '100%',
+                height: '100%',
+                zIndex: 3,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                borderRadius: radius,
+                opacity: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column'
+            }}
+            onClick={() => setShowModal(false)}>
+                <div className="btn-update-bg" onClick={upLoadIconClick}>Add Background</div>
+                {
+                    backgroundBase64 && <div className="btn-update-bg" style={{ marginTop: 25}} onClick={onRemoveBg}>Remove Background</div>
+                }
+            </div></>
             }
         </>
     );

@@ -7,12 +7,13 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 
 export default function ForgetPassword() {
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState();
     const router = useRouter();
 
     return (
         <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Poppins" }} className='text-sm flex flex-col items-center'>
-            <div className='w-4/5 '>
+            <div className='max-w-7xl'>
                 <Navbar></Navbar>
                 <div className='mt-20 flex justify-center items-center'>
                     <div style={{ borderRadius: '26px', width: "525px" }} className='bg-white px-12 py-2 relative'>
@@ -21,17 +22,21 @@ export default function ForgetPassword() {
                             <div style={{ border: "1px solid #2C3166", borderRadius: "100px", color: "#919CC1" }} className='w-full h-10 mt-4 '>
                                 <input onChange={function (e) {
                                     setEmail(e.target.value);
-                                }} type="email" style={{ borderRadius: "100px" }} className='w-full h-full p-2' placeholder='Your email'></input>
+                                }} type="email"
+                                    name='email'
+                                    style={{ borderRadius: "100px" }} className='w-full h-full p-2' placeholder='Your email'></input>
                             </div>
                             <div className='flex items-center'>
                                 <ToastContainer />
                                 <div onClick={function () {
+                                    setLoading(true)
                                     axios.get(`https://shop.totem-universe.io/auth/email/forgot-password/${email}`, {
                                         headers: {
                                             'Content-Type': 'application/json'
                                         }
                                     }).then(function (data) {
                                         console.log(data);
+                                        setLoading(false)
                                         if (data.data.success) {
                                             toast.success("Password reset email sent, Please check your email.");
                                         }
@@ -42,6 +47,7 @@ export default function ForgetPassword() {
                                             toast.error("Password reset email has been sent recently");
                                         }
                                     }).catch(function (error) {
+                                        setLoading(false)
                                         if (error.response) {
                                             // Request made and server responded
                                             console.log(error.response.data);
@@ -55,8 +61,11 @@ export default function ForgetPassword() {
                                             console.log('Error', error.message);
                                         }
                                     })
-                                }} style={{ borderRadius: '100px', background: "#161A42" }} className=' ml-4 cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4'>
-                                    <p>Send email</p>
+                                }} style={{ borderRadius: '100px', background: "#161A42" }} className='w-28 ml-4 cursor-pointer hover:opacity-80 text-white mt-4 py-2 text-center'>
+                                    <button disabled={loading} className="relative">
+                                        {loading && <div className="ld ld-ring ld-spin text-white"></div>}
+                                        {!loading && 'Send email'}
+                                    </button>
                                 </div>
                             </div>
 
