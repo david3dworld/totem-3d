@@ -383,7 +383,7 @@ const SingleModelView = ({
                <CameraControls ref={cameraRef}/>
                     <Environment
                     background={false}
-                    files={'simple_strongrim_symetric_key_a-_2_.hdr'}
+                    files={'simple_strongrim_symetric_key_a (3).hdr'}
                     path={'/'}
                 />
                 {/* <ContactShadows
