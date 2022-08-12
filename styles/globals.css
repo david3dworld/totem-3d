@@ -223,9 +223,9 @@ body {
 }
 
 .loading-spin__img {
-    width: 70%;
-    height: 52%;
+    width: 50%;
+    height: 35%;
     background-image: url('/LOADING_LOOP.gif');
-    background-size: contain;
     background-repeat: no-repeat;
+    background-size: contain;
 }

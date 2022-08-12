@@ -17,7 +17,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding } from "three";
+import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding, AnimationMixer } from "three";
 import Image from 'next/image'
 import ResetIcon from '../../../images/stop-359-1180646.png'
 import RotateIcon from '../../../images/rotate-icon-5-removebg-preview.png'
@@ -25,6 +25,7 @@ import MultiImageIcon from '../../../images/MultiImageIcon.png'
 import CameraControls from "./cameraControls";
 import RemoveBGIcon from '../../../images/remove-bg.png'
 import ReactLoading from 'react-loading';
+import ModelGroup from "./model";
 
 const figureConfig = {
     defaultScale: 0.35,
@@ -151,37 +152,25 @@ const SingleModelView = ({
     const loadingProgress = useRef(0);
     const cameraRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
-    const [loadedPercent, setLoadedPercent] = useState(0);
+    // const [loadedPercent, setLoadedPercent] = useState(0);
     const [itemGroup, setItemGroup] = useState(null);
     const [canvasConfig, setCanvasConfig] = useState(initCanvasConfig);
     const controlRef = useRef();
     const groupRef = useRef();
     const [isRotate, setIsRotate] = useState(false);
+    const [animations, setAnimations] = useState([]);
 
     const loadModel = (url) => {
         return new Promise(resolve => {
 
             const manager = new LoadingManager();
-
-            // Set up loading manager (in constructor of class)
-            manager.onProgress = function ( item, loaded, total ){
-                if(loaded != 1) {
-                    loadingProgress.current = (loaded / total * 100).toFixed(0);
-                    setLoadedPercent((loaded / total * 100).toFixed(0));
-                    if(onLoading) {
-                        if(loadingProgress.current == 100) {
-                            setTimeout(() => {
-                                onLoading(index, loadingProgress.current)         
-                            }, 800);
-                        }
-                        else {
-                            onLoading(index, loadingProgress.current)
-                        }
-                    }
-                }
-            };
-            const loader = new GLTFLoader(manager)
+            const loader = new GLTFLoader(manager);
+            let countLoad = 1;
             loader.load(url, function (data) {
+                if(data.animations) {
+                    setAnimations(data.animations)
+                }
+
                 data.scene.traverse((o) => {
                     if (o.isMesh) {
                         o.material.roughness = 1.4
@@ -190,7 +179,7 @@ const SingleModelView = ({
                         o.material.flatShading = false;
                         o.material.envMapIntensity = 0.1
                         o.position.set(0,o.position.y,0)
-                        if (o.name.toLowerCase().includes('pod')) {
+                        if (o.name.toLowerCase().includes('pod') || o.name.toLowerCase().includes('ground')) {
                             o.receiveShadow = true;
                         }
                         else {
@@ -200,12 +189,26 @@ const SingleModelView = ({
                 });
                 data.scene.userData = { ...data.scene.userData, name: url }
                 resolve(data.scene)
+            }, (e) => {
+                if(e.total) {
+
+                    if(onLoading) {
+                        if(countLoad == 1) {
+                            loadingProgress.current = +(((e.loaded / e.total) * 100).toFixed(0));
+                            onLoading(index, +(((e.loaded / e.total) * 100).toFixed(0)));
+                        }
+                    }
+
+                    if(((e.loaded / e.total) * 100).toFixed(0) == "100") {
+                        countLoad++;
+                    }                    
+                }
             })
         })
     }
 
     useEffect(() => {
-        setLoadedPercent(0);
+        // setLoadedPercent(0);
         // setModels(null);
         setItemGroup(null);
         if(modelUrl != null) {
@@ -275,7 +278,6 @@ const SingleModelView = ({
 
       function fitCameraToObject(controls, sceneMeshes, fitToVisibleOnly = false) {
 
-        console.log("ZO ne")
         sceneMeshes.updateMatrixWorld()
         const box = new Box3();
 
@@ -285,9 +287,11 @@ const SingleModelView = ({
             return;
         }
 
+
         for (const object of objects){
             box.expandByObject(object);
         }
+
         controls.fitToBox(box, false, padding);
         controls.saveState();
     }
@@ -303,7 +307,7 @@ const SingleModelView = ({
         if(controlRef.current)
             controlRef.current.saveState();
 
-        setItemGroup(new Group().add(object));
+        setItemGroup(object);
     }
 
     const onResetGroup = () => {
@@ -340,9 +344,9 @@ const SingleModelView = ({
         FR.readAsDataURL(e.target.files[0]);
     }
 
-    if(isShowProgress && loadingProgress.current != 100) {
-        return
-    }
+    // if(isShowProgress && loadingProgress.current != 100) {
+    //     return
+    // }
 
     return (
         <>
@@ -365,15 +369,18 @@ const SingleModelView = ({
                 <directionalLight intensity={0.6} position={[0.6, 1, 1.2]} castShadow={true}/>
                 <Background base64={backgroundBase64} />
                 {modelUrl != null && itemGroup && (
-                        <mesh
-                            ref={groupRef}
-                            position={new Vector3(0, -2, 0)}
-                            scale={new Vector3(figureConfig.defaultScale + figureConfig.addMaxScale, figureConfig.defaultScale + figureConfig.addMaxScale, figureConfig.defaultScale + figureConfig.addMaxScale)}>
-                            <primitive
-                                object={itemGroup}
-                                position={new Vector3(0, 0, 0)}
-                            />
-                        </mesh>
+                    <ModelGroup 
+                    groupRef={groupRef} 
+                    itemGroup={itemGroup}
+                    animations={animations}></ModelGroup>
+                        // <mesh
+                        //     ref={groupRef}
+                        //     position={new Vector3(0, -2, 0)}>
+                        //     <primitive
+                        //         object={itemGroup}
+                        //         position={new Vector3(0, 0, 0)}
+                        //     />
+                        // </mesh>
                     )}
                 {
                    (modelUrl != null && itemGroup) && <ControlGroup 
