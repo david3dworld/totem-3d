@@ -26,6 +26,7 @@ import CameraControls from "./cameraControls";
 import RemoveBGIcon from '../../../images/remove-bg.png'
 import ReactLoading from 'react-loading';
 import ModelGroup from "./model";
+import PlayIcon from '../../../images/play.png'
 
 const figureConfig = {
     defaultScale: 0.35,
@@ -157,6 +158,7 @@ const SingleModelView = ({
     const [canvasConfig, setCanvasConfig] = useState(initCanvasConfig);
     const controlRef = useRef();
     const groupRef = useRef();
+    const modelRef = useRef();
     const [isRotate, setIsRotate] = useState(false);
     const [animations, setAnimations] = useState([]);
 
@@ -344,9 +346,16 @@ const SingleModelView = ({
         FR.readAsDataURL(e.target.files[0]);
     }
 
-    // if(isShowProgress && loadingProgress.current != 100) {
-    //     return
-    // }
+    const onPlayResetAnimation = () => {
+        if(modelRef.current) {
+            if(modelRef.current.isPlaying) {
+                modelRef.current.reset();
+            }
+            else {
+                modelRef.current.play();
+            }
+        }
+    }
 
     return (
         <>
@@ -359,7 +368,6 @@ const SingleModelView = ({
                 {
                     isHasBackground && <color attach="background" args={["white"]} />
                 }
-                {/* <ambientLight intensity={0.06} /> */}
                 <hemisphereLight
                     intensity={0.15}
                     angle={0.1}
@@ -369,18 +377,11 @@ const SingleModelView = ({
                 <directionalLight intensity={0.6} position={[0.6, 1, 1.2]} castShadow={true}/>
                 <Background base64={backgroundBase64} />
                 {modelUrl != null && itemGroup && (
-                    <ModelGroup 
+                    <ModelGroup
+                    ref={modelRef}
                     groupRef={groupRef} 
                     itemGroup={itemGroup}
                     animations={animations}></ModelGroup>
-                        // <mesh
-                        //     ref={groupRef}
-                        //     position={new Vector3(0, -2, 0)}>
-                        //     <primitive
-                        //         object={itemGroup}
-                        //         position={new Vector3(0, 0, 0)}
-                        //     />
-                        // </mesh>
                     )}
                 {
                    (modelUrl != null && itemGroup) && <ControlGroup 
@@ -393,13 +394,6 @@ const SingleModelView = ({
                     files={'simple_strongrim_symetric_key_a (3).hdr'}
                     path={'/'}
                 />
-                {/* <ContactShadows
-                    position={[0, 0.5, 0]}
-                    opacity={0.25}
-                    scale={10}
-                    blur={1.5}
-                    far={0.8}
-                /> */}
                 <OrbitControls
                     ref={controlRef}
                     enableZoom={canvasConfig.orbitControls.enableZoom}
@@ -413,13 +407,12 @@ const SingleModelView = ({
                (modelUrl != null && isHasControl && itemGroup) && <div
                     className="control-group"
                 >
-                    {/* {
-                        backgroundBase64 &&
-                        <div className="control__control-group" onClick={onRemoveBg}>
-                            <Image className="reset" alt="" src={RemoveBGIcon} style={{ opacity: 0.3 }} />
+                    {
+                        animations && animations.length > 0 && <div className="control__control-group" style={{ margin: 0 }} onClick={onPlayResetAnimation}>
+                            <Image className="reset" alt="" src={PlayIcon} style={{ opacity: 0.3 }} />
                         </div>
-                    } */}
-                    <div className="control__control-group" onClick={onResetGroup} style={{margin: 0}}>
+                    }
+                    <div className="control__control-group" onClick={onResetGroup}>
                         <Image className="reset" alt="" src={ResetIcon} style={{opacity: 0.3}}/>
                     </div>
                     {
