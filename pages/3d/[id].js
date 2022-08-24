@@ -1,25 +1,48 @@
-import React from 'react'
-import Navbar from "./navbar/index"
-import bg from "../images/Bg.png"
+import React, { useEffect, useState } from 'react'
+import Navbar from "../navbar/index"
+import bg from "../../images/Bg.png"
 import Image from 'next/image'
-import Footer from './footer'
-import discord from "../images/discord.png"
-import popeyeCollection from "../images/popeye-collection.png"
-import phantomAnimal from "../images/phantomAnimal.png"
-import flashKing from "../images/flashKing.png"
+import Footer from '../footer'
+import discord from "../../images/discord.png"
+import popeyeCollection from "../../images/popeye-collection.png"
+import phantomAnimal from "../../images/phantomAnimal.png"
+import flashKing from "../../images/flashKing.png"
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
-import SingleModelView from './components/singleModelView';
+import SingleModelView from '../components/singleModelView';
+import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 export default function ThreeD() {
+
+  const [product, setProduct] = useState([]);
+
+    const router = useRouter()
+    const token = useSelector(function (state) {
+      return state.token;
+    });
+
+    useEffect(() => {
+        if (!router.isReady) return;
+        axios.get(`https://shop.totem-universe.io/product/${router.query.id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(function (data) {
+          setProduct([data.data])
+        }).catch(function (error) {
+          console.log(error);
+        })
+    
+      }, [router.isReady, router])
+
     const images = [
         popeyeCollection,
         phantomAnimal,
         flashKing
     ];
-
-
-    const items = [1,2,3,4,5]
 
   return (
     <div style={{ backgroundColor : "#0D0F23",color : "#919CC1",fontFamily : "Chakra Petch" }} className='text-sm flex flex-col items-center max-w-7xl'>
@@ -42,10 +65,27 @@ export default function ThreeD() {
 
     <Carousel>
           {
-            items && items.map((i, index) => {
+            product && product.map((i, index) => {
               return <div key={index} className='flex justify-center items-center'>
                 <div style={{ width: 681, height: 625, borderRadius: '26px', position: 'relative' }} className='bg-white'>
-                  <SingleModelView zoom={130} radius={'26px'} modelUrl={'/popeye.glb'}/>
+                    {
+                       (!i.image3D || i.image3D.toLowerCase().includes('undefined')) && <Image width={681} height={625} style={{ borderRadius: '26px' }} src={i.imageUrl}></Image>
+                    }
+                     {
+                       (i.image3D && !i.image3D.toLowerCase().includes('undefined')) && <SingleModelView 
+                       radius={'26px'} 
+                       modelUrl={i.image3D}  
+                       zoom={0}
+                       isFitZoom={true}
+                       padding={{
+                         paddingTop: 0.4,
+                         paddingLeft: 0.4,
+                         paddingBottom: 0.4,
+                         paddingRight: 0.4
+                       }}
+                       loadingWidth="40%"
+                       loadingHeight="40%"/>
+                    }
                 </div>
               </div>
             })

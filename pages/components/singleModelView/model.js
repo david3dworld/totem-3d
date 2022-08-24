@@ -1,9 +1,11 @@
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
-import { AnimationMixer, Audio, AudioAnalyser, AudioListener, AudioLoader, Vector3 } from "three"
+import { AnimationMixer, Audio, AudioAnalyser, AudioListener, AudioLoader, BoxHelper, Group, Vector3 } from "three"
 
 // eslint-disable-next-line react/display-name
 const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
+
+    // const { scene } = useThree();
 
     useImperativeHandle(ref, () => ({
         play: () => onPlayAnimation(),
@@ -17,15 +19,44 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
 
     useEffect(() => {
         if (!itemGroup) return;
+        // scene.children = scene.children.filter(item => item.type != "BoxHelper")
+        // console.log("scene", scene, itemGroup)
+        // const meshhh = animations.length > 0 ? getAllMeshes(itemGroup).filter((item, idx) => item.isSkinnedMesh) : getAllMeshes(itemGroup)
+        // console.log("scene", meshhh)
 
+        // for(const m of meshhh) {
+        //     m.updateMatrixWorld();
+        //     scene.add(new BoxHelper(m))
+        // }
+
+        // const newG = new Group();
+        // newG.children = meshhh;
+        // scene.add(new BoxHelper(newG))
         setMixer(new AnimationMixer(itemGroup));
 
-    }, [itemGroup]);
+    }, [itemGroup, animations]);
+
+    function getAllMeshes(parent, visibleOnly = false) {
+        let meshes = [];
+        if (parent.children && parent.children.length > 0) {
+          for (let child of parent.children) {
+            if (child.isMesh) {
+              if (!visibleOnly || (visibleOnly && child.visible)) {
+                meshes.push(child);
+              }
+            }
+            if (child.children && child.children.length > 0) {
+              let childMeshes = getAllMeshes(child, visibleOnly);
+              meshes.push(...childMeshes);
+            }
+          }
+        }
+        return meshes;
+      }
 
     useEffect(() => {
         loadMusic().then(rs => {
             setMusic(rs);
-            console.log("Music", rs)
         })
     }, [])
 

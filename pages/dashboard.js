@@ -11,16 +11,17 @@ import discordIcon from '../images/discord-icon.svg'
 import { useRouter } from 'next/router'
 import polygon1 from "../images/polygon-matic-logo.png"
 import styled from 'styled-components'
-import { getPurchasedProducts, getProducts, getProductsByCollectionIds } from '../api/product'
+import { getPurchasedProducts, getProductsByCollectionIds } from '../api/product'
 import { getBrands } from '../api/brand'
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
+import SingleModelView from './components/singleModelView/index'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import Link from 'next/link';
 const customStyles = {
   content: {
     top: '50%',
@@ -32,7 +33,7 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
   },
 };
-const CONTRACT_ADDRESS = "0x3D9F895C786E2bBe7785763566ABe6db3c2F546c"
+const CONTRACT_ADDRESS = "0x5629b4d18c0B93377F5f28e544929a42ec004724"
 export default function dashboard() {
   const { authenticate, isAuthenticated, isInitialized, account, chainId, Moralis, logout } = useMoralis();
   const Web3Api = useMoralisWeb3Api();
@@ -83,19 +84,20 @@ export default function dashboard() {
         }
       })
     const fetchData = async () => {
-      const userEthNFTs = await Web3Api.account.getNFTs({ chain: "rinkeby", address: account })
+      const userEthNFTs = await Web3Api.account.getNFTs({ chain: "mumbai", address: account })
       console.log("userEthNfts------->", userEthNFTs)
       setNfts([...userEthNFTs.result])
+      setLoading(false)
       return userEthNFTs;
     }
     if (account) {
-      const result = fetchData()
-      setLoading(false)
+      const result =  fetchData()
 
     } else {
       getPurchasedProducts((error, res) => {
         if (res && res.data) {
           const result = flattenNFTs(res.data)
+          console.log('getPurchasedProducts result', result);
           setLoading(false)
           setFilteredNfts(result)
         }
@@ -111,18 +113,27 @@ export default function dashboard() {
 
       })
       const ids = filtered.map((nft) => nft.token_id)
+      console.log('ids', ids);
       getProductsByCollectionIds(ids.join(","), (error, res) => {
         setFilteredNfts(res.data.result)
       })
     }
   }, [nfts])
+
   useEffect(() => {
     const productsMap = {}
     filteredNfts.map((nft, index) => {
-      const tempList = []
-      tempList.push(nft)
-      productsMap[nft.brandId] = tempList
+      console.log(productsMap)
+      if (nft?.brandId) {
+        if (productsMap[nft.brandId] || productsMap[nft.brandId] == 0) {
+          productsMap[nft.brandId] = productsMap[nft.brandId] + 1
+        } else {
+          productsMap[nft.brandId] = 0
+        }
+      }
+
     })
+    console.log(productsMap)
 
     let recordLength = 0
     let selectedBrandId = null
@@ -137,7 +148,7 @@ export default function dashboard() {
 
   useEffect(() => {
     const selectedBrand = brands[selectedBrandIndex]
-    const tempList = filteredNfts.filter((nft) => nft.brandId === selectedBrand._id)
+    const tempList = filteredNfts.filter((nft) => nft && nft.brandId && nft.brandId === selectedBrand._id)
     setBrandFilteredNfts(tempList)
   }, [filteredNfts, selectedBrandIndex])
   const confirmTransfer = async () => {
@@ -165,18 +176,24 @@ export default function dashboard() {
     NotificationManager.success("Transferred successfully!")
   }
   const calcTotalPrice = (data) => {
-    return data.reduce(function (accumulator, curValue) {
-      return accumulator + curValue.priceUsd
-    }, 0)
+    if (data.length === 0) {
+      return '0'
+    } else {
+      let total = data.filter(item => item).reduce(function (accumulator, curValue) {
+        return accumulator + curValue.priceUsd
+      }, 0)
+      return total;
+    }
   }
   const calcTotalPriceMatic = (data) => {
     if (data.length === 0) {
       return '0'
     }
     else {
-      return data.reduce(function (accumulator, curValue) {
+      let total = data.filter(item => item).reduce(function (accumulator, curValue) {
         return accumulator + curValue.priceMatic
       }, 0)
+      return total;
     }
 
   }
@@ -252,7 +269,7 @@ export default function dashboard() {
 
 
               <div>
-                <p style={{ fontFamily: "Poppins" }} className='text-2xl text-white mt-10 text-muted'>MY GALLERY</p>
+                <p style={{ fontFamily: "Poppins" }} className='text-2xl mt-10 text-muted'>MY GALLERY</p>
               </div>
               <div className='flex items-center mt-12'>
                 {brands == 0 && <div className='w-full'>
@@ -270,18 +287,30 @@ export default function dashboard() {
                   })
                 }
               </div>
-              <div className='flex flex-col items-center lg:grid grid-cols-4 mt-10 gap-x-5 gap-y-12'>
+              <div className='flex flex-col lg:flex-row items-center mt-10'>
+                {!loading && brandFilteredNfts.length == 0 && <span className='text-2xl text-white font-bold'>No result</span>}
                 {brandFilteredNfts.map(function (data, index) {
                   return (
-                    <div key={index} style={{ background: "#161A42", width: "200px", height: "426px" }} className=' mt-0 w-full lg:w-max rounded-lg'>
-                      <div style={{ borderRadius: '8px', height: "230px" }} className=' bg-white m-2'>
+                    <div key={index} style={{ background: "#161A42", width: "200px", height: "456px" }} className='mx-3 mt-0 w-full lg:w-max rounded-lg'>
+                      <div style={{ borderRadius: '8px', height: "230px", width: '100%' }} className=' bg-white'>
                         {/* <div className='relative top-2 left-2'>
                           <Image height={20} width={60} src={bg}></Image>
                         </div> */}
-                        <div style={{ borderRadius: '8px' }} className=' flex justify-center items-center'>
-
-                          <div className='mt-3'>
-                            <Image width={134} height={186} src={data.imageUrl}></Image>
+                        <div style={{ borderRadius: '8px', width: '100%', height: "100%" }} className=' flex justify-center items-center'>
+                          <div className='h-60' style={{ position: "relative", width: '100%', height: "100%" }}>
+                            {(!data?.image3D || data?.image3D.toLowerCase().includes("undefined")) && data?.imageUrl && <Image width={200} height={230} src={data?.imageUrl}></Image>}
+                            {data?.image3D && !data?.image3D.toLowerCase().includes("undefined") && <SingleModelView 
+                            modelUrl={data.image3D} 
+                            radius='8px' 
+                            zoom={0}
+                            isFitZoom={true}
+                            padding={{
+                              paddingTop: 0,
+                              paddingLeft: 0,
+                              paddingBottom: 0,
+                              paddingRight: 0
+                            }}
+                            isHasControl={false}/>}
                           </div>
                         </div>
                       </div>
@@ -291,9 +320,9 @@ export default function dashboard() {
                         </div>
                       </div>
                       <div className='p-3 relative bottom-7'>
-                        <p className='text-lg text-white'>{data.name}</p>
+                        <p className='text-lg text-white text-left line-clamp-2 h-14'>{data.name}</p>
 
-                        <div className='relative flex items-center mt-3'>
+                        <div className='relative flex items-center mt-5'>
                           <p className='text-white'>{data?.scaracity}</p>
                           <p className='absolute right-0 text-white'>{data?.series}</p>
                         </div>
@@ -302,19 +331,27 @@ export default function dashboard() {
                         </div>
                         <div style={{ fontFamily: "Poppins" }} className='flex items-center relative mt-4'>
                           <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
-                          <p style={{ color: "#0EA8D6" }} className='ml-1 text-xs '>{data.priceMatic}</p>
+                          <p style={{ color: "#0EA8D6" }} className='ml-1 text-xs '>{parseFloat(data.priceMatic).toFixed(2)}</p>
                           <Image src={polygon1}></Image>
                           <p className='absolute right-0 text-[10px]'>{data?.productNo}/{data?.maxCap}</p>
                         </div>
 
                         <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
                         </div>
-                        {
-                          account &&
-                          <div className='flex items-center justify-center mt-2' onClick={() => { setSelectedNft(data); setShowTransferModal(true) }}>
-                            <p className='text-white cursor-pointer'>TRANSFER TO</p>
+                        <div className='flex'>
+                        <Link href={`/3d/${data._id}`}>
+                          <div className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900'>
+                            <p className='text-white  text-sm font-bold'>VIEW</p>
                           </div>
-                        }
+                          </Link>
+                          {/* {
+                          account && */}
+                          <div style={{ borderLeft: '1px solid #2E357B' }}
+                            className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900' onClick={() => { setSelectedNft(data); setShowTransferModal(true) }}>
+                            <p className='text-white text-sm font-bold'>SELL</p>
+                          </div>
+                          {/* } */}
+                        </div>
                       </div>
                     </div>
                   )

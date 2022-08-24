@@ -145,7 +145,9 @@ const SingleModelView = ({
         paddingLeft: 0,
         paddingBottom: 0,
         paddingRight: 0
-    }
+    },
+    loadingWidth = "50%",
+    loadingHeight = "35%"
     }) => {
     // const [models, setModels] = useState(null);
     const inputUploadFile = useRef();
@@ -213,7 +215,7 @@ const SingleModelView = ({
         // setLoadedPercent(0);
         // setModels(null);
         setItemGroup(null);
-        if(modelUrl != null) {
+        if(modelUrl != null && !modelUrl.toLowerCase().includes("undefined")) {
             loadModel(modelUrl).then(models => {
             
                 models.traverse((o) => {
@@ -258,7 +260,7 @@ const SingleModelView = ({
                 }, 500);
             }, 100)
         }
-    }, [itemGroup])
+    }, [itemGroup, animations])
 
     function getAllMeshes(parent, visibleOnly = false) {
         let meshes = [];
@@ -282,8 +284,7 @@ const SingleModelView = ({
 
         sceneMeshes.updateMatrixWorld()
         const box = new Box3();
-
-        let objects = getAllMeshes(sceneMeshes, fitToVisibleOnly);
+        let objects = animations.length > 0 ? getAllMeshes(sceneMeshes, fitToVisibleOnly).filter((item, idx) => item.isSkinnedMesh) : getAllMeshes(sceneMeshes, fitToVisibleOnly);
 
         if(objects.length === 0){
             return;
@@ -295,7 +296,9 @@ const SingleModelView = ({
         }
 
         controls.fitToBox(box, false, padding);
-        controls.saveState();
+        setTimeout(() => {
+            controls.saveState();
+        }, 100);
     }
 
     const onSelectModel = (object) => {
@@ -410,9 +413,9 @@ const SingleModelView = ({
                     {
                         animations && animations.length > 0 && <div className="control__control-group" style={{ margin: 0 }} onClick={onPlayResetAnimation}>
                             <Image className="reset" alt="" src={PlayIcon} style={{ opacity: 0.3 }} />
-                        </div>
+                        </div> 
                     }
-                    <div className="control__control-group" onClick={onResetGroup}>
+                    <div className="control__control-group" onClick={onResetGroup} style={ animations && animations.length > 0 ? {} : {margin: 0}}>
                         <Image className="reset" alt="" src={ResetIcon} style={{opacity: 0.3}}/>
                     </div>
                     {
@@ -434,9 +437,9 @@ const SingleModelView = ({
                     {/* {
                         modelUrl && <><ReactLoading type={'bars'} color={'black'} height={'20%'} width={'20%'} />
                             <div>{`${loadedPercent}%`}</div></>
-                    } */}
+                    } */} 
                     {
-                        modelUrl && <div className="loading-spin__img" style={{ border: radius }}></div>
+                        modelUrl && <div className="loading-spin__img" style={{ border: radius, width: loadingWidth, height: loadingHeight }}></div>
                     }
                     {
                         !modelUrl && <div>No item</div>

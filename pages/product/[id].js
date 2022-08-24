@@ -12,6 +12,7 @@ import jeep from "../../images/jeep.png"
 import polygon1 from "../../images/polygon-matic-logo.png"
 import popeyeDetail from "../../images/popeye-detail.png"
 import SingleModelView from '../components/singleModelView/index'
+import BabylonModelView from '../components/BabylonModelView'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import Link from 'next/link'
@@ -114,19 +115,19 @@ export default function product() {
 
         <div className='mt-16 flex lg:flex-row flex-col'>
           <div className='relative lg:w-4/12' style={{ background: 'white', height: "525px", width: "393px", borderRadius: '20px' }}>
-            <SingleModelView 
-              key={product._id}
-              radius='20px'
-              modelUrl={product.image3D ? product.image3D : null} 
-              allowChangeBackground={false}
-              zoom={0}
-              isFitZoom={true}
-              padding={{
-                paddingTop: 0.03,
-                paddingLeft: 0.03,
-                paddingBottom: 0.03,
-                paddingRight: 0.03
-              }}
+              <BabylonModelView 
+                modelUrl={product.image3D ? product.image3D : null} 
+                radius='20px'
+                key={product._id}
+                allowChangeBackground={false}
+                zoom={0}
+                isFitZoom={true}
+                padding={{
+                  paddingTop: 0.03,
+                  paddingLeft: 0.03,
+                  paddingBottom: 0.03,
+                  paddingRight: 0.03
+                }}
               />
           </div>
           <div className='lg:w-8/12 flex justify-center'>
