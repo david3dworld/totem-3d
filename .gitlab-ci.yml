@@ -1,0 +1,28 @@
+# before_script:
+#   - docker info
+
+# build_image:
+#   script:
+#     - docker build -t totem-image .
+#     - docker run --rm --name totem -p 4001:3000 totem-image
+
+# test_job:
+#   image: node:16
+#   script:
+#     - node -v
+#     - echo "hahahaah"
+
+
+image: node:16
+
+
+# This folder is cached between builds
+# https://docs.gitlab.com/ee/ci/yaml/index.html#cache
+cache:
+  paths:
+    - node_modules/
+
+test_async:
+  script:
+    - npm install --legacy-peer-deps
+    - npm run start

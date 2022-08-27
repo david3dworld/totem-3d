@@ -579,10 +579,10 @@ export default function Collection() {
                             zoom={0}
                             isFitZoom={true}
                             padding={{
-                              paddingTop: 0.001,
-                              paddingLeft: 0.001,
-                              paddingBottom: 0.001,
-                              paddingRight: 0.001
+                              paddingTop: 0.01,
+                              paddingLeft: 0.01,
+                              paddingBottom: 0.01,
+                              paddingRight: 0.01
                             }}
                           />
                       </div>

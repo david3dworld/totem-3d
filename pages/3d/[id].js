@@ -78,13 +78,16 @@ export default function ThreeD() {
                        zoom={0}
                        isFitZoom={true}
                        padding={{
-                         paddingTop: 0.4,
-                         paddingLeft: 0.4,
-                         paddingBottom: 0.4,
-                         paddingRight: 0.4
+                         paddingTop: 0.2,
+                         paddingLeft: 0.2,
+                         paddingBottom: 0.2,
+                         paddingRight: 0.2
                        }}
                        loadingWidth="40%"
-                       loadingHeight="40%"/>
+                       loadingHeight="40%"
+                       showLoadedPecent={true}
+                       loadingBackgroundUrl={i.imageUrl ? i.imageUrl : ''}
+                       />
                     }
                 </div>
               </div>

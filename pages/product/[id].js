@@ -115,7 +115,7 @@ export default function product() {
 
         <div className='mt-16 flex lg:flex-row flex-col'>
           <div className='relative lg:w-4/12' style={{ background: 'white', height: "525px", width: "393px", borderRadius: '20px' }}>
-              <BabylonModelView 
+          {Object.keys(product).length != 0 && <SingleModelView 
                 modelUrl={product.image3D ? product.image3D : null} 
                 radius='20px'
                 key={product._id}
@@ -123,12 +123,14 @@ export default function product() {
                 zoom={0}
                 isFitZoom={true}
                 padding={{
-                  paddingTop: 0.03,
-                  paddingLeft: 0.03,
-                  paddingBottom: 0.03,
-                  paddingRight: 0.03
+                  paddingTop: 0.2,
+                  paddingLeft: 0.2,
+                  paddingBottom: 0.2,
+                  paddingRight: 0.2
                 }}
-              />
+                showLoadedPecent = {true}
+                loadingBackgroundUrl = {product.imageUrl ? product.imageUrl : ''}
+              />}
           </div>
           <div className='lg:w-8/12 flex justify-center'>
             <div style={{ borderRadius: '20px', background: "#161A42 0% 0% no-repeat padding-box" }} className='w-11/12 py-5 px-9 flex lg:flex-row flex-col'>
