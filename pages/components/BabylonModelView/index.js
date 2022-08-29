@@ -253,6 +253,8 @@ const BabylonModelView = (
 
                         </standardMaterial>
                     </ground> */}
+
+                    
                     {backgroundBase64 && <layer isBackground={true} imgUrl={backgroundBase64}/>}
                     {modelUrl && <Suspense fallback={null} >
                         <Model

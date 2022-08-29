@@ -17,7 +17,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding, AnimationMixer } from "three";
+import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding, AnimationMixer, DoubleSide, BackSide, FrontSide } from "three";
 import Image from 'next/image'
 import ResetIcon from '../../../images/stop-359-1180646.png'
 import RotateIcon from '../../../images/rotate-icon-5-removebg-preview.png'
@@ -39,7 +39,7 @@ const ControlGroup = ({group, isRotate}) => {
     useFrame(() => {
         if(isRotate) {
             if(group){
-                group.rotation.y -= Math.PI/300
+                group.rotation.y += Math.PI/300
             }
         }
     })
@@ -118,7 +118,7 @@ const Background = ({base64}) => {
   }
 
 const SingleModelView = ({
-    modelUrl = "",
+    modelUrl = '',
     isHasBackground = true,
     zoom = 50,
     radius = '',
@@ -147,7 +147,9 @@ const SingleModelView = ({
         paddingRight: 0
     },
     loadingWidth = "50%",
-    loadingHeight = "35%"
+    loadingHeight = "35%",
+    showLoadedPecent = false,
+    loadingBackgroundUrl = ''
     }) => {
     // const [models, setModels] = useState(null);
     const inputUploadFile = useRef();
@@ -155,7 +157,7 @@ const SingleModelView = ({
     const loadingProgress = useRef(0);
     const cameraRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
-    // const [loadedPercent, setLoadedPercent] = useState(0);
+    const [loadedPercent, setLoadedPercent] = useState(0);
     const [itemGroup, setItemGroup] = useState(null);
     const [canvasConfig, setCanvasConfig] = useState(initCanvasConfig);
     const controlRef = useRef();
@@ -177,24 +179,27 @@ const SingleModelView = ({
 
                 data.scene.traverse((o) => {
                     if (o.isMesh) {
-                        o.material.roughness = 1.4
+                        o.material.roughness = 1
                         o.material.transparent = true;
                         o.material.opacity = 0.1;
                         o.material.flatShading = false;
                         o.material.envMapIntensity = 0.1
                         o.position.set(0,o.position.y,0)
-                        if (o.name.toLowerCase().includes('pod') || o.name.toLowerCase().includes('ground')) {
-                            o.receiveShadow = true;
-                        }
-                        else {
-                            o.castShadow = true;
-                        }
+                        o.material.metalness = 0.8
+                        
+                        o.receiveShadow = true;
+                        o.castShadow = true;
+
+                        o.material.side = FrontSide
                     }
                 });
+                // data.scene.receiveShadow = true;
+                // data.scene.castShadow = true;
                 data.scene.userData = { ...data.scene.userData, name: url }
                 resolve(data.scene)
             }, (e) => {
                 if(e.total) {
+                    setLoadedPercent(+(((e.loaded / e.total) * 100).toFixed(0)))
 
                     if(onLoading) {
                         if(countLoad == 1) {
@@ -212,7 +217,7 @@ const SingleModelView = ({
     }
 
     useEffect(() => {
-        // setLoadedPercent(0);
+        setLoadedPercent(0);
         // setModels(null);
         setItemGroup(null);
         if(modelUrl != null && !modelUrl.toLowerCase().includes("undefined")) {
@@ -280,7 +285,7 @@ const SingleModelView = ({
         return meshes;
       }
 
-      function fitCameraToObject(controls, sceneMeshes, fitToVisibleOnly = false) {
+      function fitCameraToObject(controls, sceneMeshes,padding, fitToVisibleOnly = false) {
 
         sceneMeshes.updateMatrixWorld()
         const box = new Box3();
@@ -295,7 +300,19 @@ const SingleModelView = ({
             box.expandByObject(object);
         }
 
-        controls.fitToBox(box, false, padding);
+        const modelWidth = box.max.z - box.min.z;
+        const modelHeight = box.max.y - box.min.y;
+        const fitPadding = {
+            paddingTop: padding.paddingTop * modelHeight,
+            paddingLeft: padding.paddingLeft * modelWidth,
+            paddingBottom: padding.paddingBottom * modelHeight,
+            paddingRight: padding.paddingRight * modelWidth
+        }
+
+        controls.fitToBox(box, false, fitPadding);
+        const minZoom = 93.52 / modelWidth
+        controls.minZoom = minZoom
+
         setTimeout(() => {
             controls.saveState();
         }, 100);
@@ -365,19 +382,19 @@ const SingleModelView = ({
             <Canvas
                 orthographic={canvasConfig.orthographic}
                 shadows={canvasConfig.shadows}
-                camera={{ zoom: zoom, fov: 80 }}
+                camera={{ zoom: zoom, fov: 80, near: -10 }}
                 style={{borderRadius: radius ? radius : '0'}}
             >
                 {
                     isHasBackground && <color attach="background" args={["white"]} />
                 }
-                <hemisphereLight
-                    intensity={0.15}
+                {/* <hemisphereLight
+                    intensity={0.1}
                     angle={0.1}
                     penumbra={1}
                     position={[10, 15, 10]}
-                />
-                <directionalLight intensity={0.6} position={[0.6, 1, 1.2]} castShadow={true}/>
+                /> */}
+                <directionalLight intensity={0.8} position={[4.2, 9, 5.8]} castShadow={true}/>
                 <Background base64={backgroundBase64} />
                 {modelUrl != null && itemGroup && (
                     <ModelGroup
@@ -433,16 +450,17 @@ const SingleModelView = ({
                 </div>
             }
             {
-                !itemGroup && <div className="loading-spin__container" style={{ borderRadius: radius }}>
-                    {/* {
-                        modelUrl && <><ReactLoading type={'bars'} color={'black'} height={'20%'} width={'20%'} />
-                            <div>{`${loadedPercent}%`}</div></>
-                    } */} 
+                !itemGroup && <div className="loading-spin__container" style={loadingBackgroundUrl ?{ borderRadius: radius, backgroundImage: `url(${loadingBackgroundUrl})`, backgroundSize: '100% 100%' } :{ borderRadius: radius, background: 'rgba(255,255,255,1)' }}>
                     {
-                        modelUrl && <div className="loading-spin__img" style={{ border: radius, width: loadingWidth, height: loadingHeight }}></div>
+                        modelUrl && showLoadedPecent && <>
+                            <div className="loading-model-3D">{ `LOADING 3D MODEL...${loadedPercent}%`}</div>
+                        </>
+                    } 
+                    {
+                        modelUrl && !showLoadedPecent && <div className="loading-spin__img" style={{ border: radius, width: loadingWidth, height: loadingHeight }}></div>
                     }
                     {
-                        !modelUrl && <div>No item</div>
+                        !modelUrl && <div className="loading-spin__img" style={{ border: radius, width: loadingWidth, height: loadingHeight }}></div>
                     }
                     
                 </div>

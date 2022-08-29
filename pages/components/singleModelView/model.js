@@ -60,6 +60,14 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
         })
     }, [])
 
+    useEffect(() => {
+        return () => {
+            if(music && music.isPlaying) {
+                music.stop()
+            }
+        }
+    }, [music])
+
     const onPlayAnimation = () => {
         if (mixer && animations.length > 0) {
             mixer.clipAction(animations[0]).play();
@@ -73,7 +81,7 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
     const onResetAnimation = () => {
         if (mixer && animations.length > 0) {
             mixer.clipAction(animations[0]).stop();
-            if(music) {
+            if(music && music.isPlaying) {
                 music.stop();
             }
             setIsPlaying(false);
@@ -86,10 +94,10 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
             const music = new Audio(listener)
             const loader = new AudioLoader()
 
-            loader.load('/SOUND_STORM_ANIMATION.mp3', buffer => {
+            loader.load('/POPEYE_PREMIUM_AUDIO.mp3', buffer => {
                 music.setBuffer(buffer)
                 music.setLoop(true)
-                music.setVolume(0.1)
+                music.setVolume(1)
 
                 // const analyser = new AudioAnalyser(music, 128)
                 // music.play()
