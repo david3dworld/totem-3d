@@ -450,6 +450,126 @@ export default function Collection() {
             }} className='rounded-lg p-1' style={{ border: '1px solid #2E357B;',background : "#161A42",fontFamily:"Poppins" }} placeholder='Enter tag' type="text"></input>
         </div>
           */}
+<<<<<<< HEAD
+=======
+    </div>
+
+    
+    <div className='mt-5 ml-5 lg:mt-0 w-full max-w-xs sm:max-w-md md:max-w-3xl lg:max-w-6xl '>
+    <Slider  {...settingsBrands}>
+        {filters?.map(function(data, index){
+         
+          return (
+            <Link href={`/product/${data._id}`} key={index}>
+              <a>
+                <div style={{background:"#161A42" }} className='p-1 mt-0 rounded-lg m-5'>
+                  <div style={{ borderRadius : '8px', width: 'fit-content' }} className='bg-white my-2 mx-auto'>
+                    {/* <div className='relative top-2 left-2'>
+                    <Image height={20} width={60} src={popeyeBlue} />
+                    </div> */}
+                    <div  className='rounded flex justify-center items-center relative'>
+                    {
+                      (!loadingItems.find(item => item.index == index) || (loadingItems.find(item => item.index == index) && loadingItems.find(item => item.index == index).progress != 100)) && <div
+                      style={{ height: 228, width: widthItem, position: "relative" }}>
+                        <Image 
+                          src={data.imageUrl} 
+                          objectFit="cover" 
+                          width={widthItem} 
+                          height={228} 
+                          alt={`${data.name}'s image`} 
+                          onMouseEnter={(e) => onLoadItem(index, 0)}
+                          onMouseOut={() => onRemoveLoadingItem(index)}/>
+                      { loadingItems.find(item => item.index == index) && <div style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          height: 5,
+                          width: `${loadingItems.find(item => item.index == index).progress}%`,
+                          background: 'rgb(14, 168, 214)',
+                          zIndex: 2
+                        }}></div>}
+                      </div>
+                    }
+                    {
+                      !!loadingItems.find(item => item.index == index) && <div
+                      style={{ height: 228, width: widthItem, position: "relative", display: loadingItems.find(item => item.index == index).progress == 100 ? 'block' : 'none' }}
+                      onMouseEnter={(e) => onMouseEnter(e,index)}
+                      onMouseMove={(e) => onMouseMove(e,index)}
+                      onMouseOut={() => onMouseOut(index)}>
+                          <SingleModelView
+                            key={index}
+                            isHasControl={false}
+                            initCanvasConfig={{
+                              orthographic: true,
+                              shadows: true,
+                              orbitControls: {
+                                enableZoom: false,
+                                enablePan: false,
+                                enableRotate: false,
+                                minPolarAngle: 0,
+                                maxPolarAngle: Math.PI
+                              },
+                            }}
+                            hoverRotateAngle={index == figureRotate.index ? figureRotate.rotate : 0}
+                            isShowProgress={true}
+                            index={index}
+                            onLoading={(index, progress) => onLoadingItem(index, progress, loadingItems)}
+                            modelUrl={data.image3D ? data.image3D : null}
+                            zoom={0}
+                            isFitZoom={true}
+                            padding={{
+                              paddingTop: 0.01,
+                              paddingLeft: 0.01,
+                              paddingBottom: 0.01,
+                              paddingRight: 0.01
+                            }}
+                          />
+                      </div>
+                    }
+                    <div className='category'>
+                      {data.category == 'music' && <Image alt='' className='music' src={music}/>}
+                      {data.category == 'movies' && <Image alt='' className='movies' src={movies}/>}
+                      {data.category == 'games' && <Image alt='' className='games' src={games}/>}
+                      {data.category == 'sports' && <Image alt='' className='sports' src={sports}/>}
+                      {data.category == 'comics' && <Image alt='' className='comics' src={comics}/>}
+                      {data.category == 'art' && <Image alt='' className='art' src={art}/>}
+                    </div>
+                    </div>
+                  </div>
+                  <div className='p-3'>
+                    <p className='text-lg text-white'>{data.name}</p>
+
+                    <div className='relative flex items-center mt-3'>
+                      <p className='text-white'>{data?.scaracity}</p>
+                      <p className='absolute right-0 text-white mb-2'>{data.series}</p>
+                    </div>
+
+                    <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
+                    </div>
+                    <div className='flex items-center relative mt-4'>
+                      <p style={{ color : "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
+                      <p style={{ color : "#0EA8D6" }} className='ml-1 text-lg '>{data.priceMatic}</p>
+                      <Image src={polygon1} alt='polygon-icon' />
+                      <p className='absolute right-0'>{data?.productNo}/{data?.maxCap}</p>
+                    </div>
+                    <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2" />
+                    <div className='pt-3'>
+                      <p className='text-white cursor-pointer text-center hover:opacity-80'>COLLECT</p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </Link>
+          )
+        })}
+        </Slider>
+    </div>
+    
+
+</div>
+
+<Footer></Footer>
+>>>>>>> origin
         </div>
         <div
           className='mt-5 lg:mt-0 px-2 lg:px-8 flex w-full flex-wrap '

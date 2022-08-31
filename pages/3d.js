@@ -4,6 +4,7 @@ import bg from "../images/Bg.png"
 import Image from 'next/image'
 import Footer from './footer'
 import discord from "../images/discord.png"
+<<<<<<< HEAD
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
@@ -44,9 +45,32 @@ export default function ThreeD() {
   return (
     <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Chakra Petch" }} className='text-sm flex flex-col items-center max-w-7xl'>
       <div className='max-w-7xl w-full'>
+=======
+import popeyeCollection from "../images/popeye-collection.png"
+import phantomAnimal from "../images/phantomAnimal.png"
+import flashKing from "../images/flashKing.png"
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
+import SingleModelView from './components/singleModelView';
+
+export default function ThreeD() {
+    const images = [
+        popeyeCollection,
+        phantomAnimal,
+        flashKing
+    ];
+
+
+    const items = [1,2,3,4,5]
+
+  return (
+    <div style={{ backgroundColor : "#0D0F23",color : "#919CC1",fontFamily : "Chakra Petch" }} className='text-sm flex flex-col items-center max-w-7xl'>
+    <div className='w-4/5 '>
+>>>>>>> origin
 
         <Navbar></Navbar>
 
+<<<<<<< HEAD
         <div style={{ background: '#161A42 ', borderRadius: '16px;' }} className='lg:h-16 w-full mt-16 flex items-center lg:flex-row flex-col'>
           <div>
             {profileInfo.profilepicture && <Image className='rounded-full' width={81} height={81} src={profileInfo.profilepicture} alt="" />}
@@ -57,21 +81,44 @@ export default function ThreeD() {
           </div>
           <div style={{ border: "2px solid #2E357B" }} className='lg:h-10 w-4/5 lg:w-0'></div>
         </div>
+=======
+    <div style={{background: '#161A42 ',borderRadius: '16px;'}} className='lg:h-16 w-full mt-16 flex items-center lg:flex-row flex-col'>
+    <div className=''>
+        <Image width={81} height={81} src={bg}></Image>
+    </div>
+    <div className='m-4'>
+        <p className='text-2xl text-white'>MY DASHBOARD</p>
+    </div>
+    <div style={{ border:"2px solid #2E357B" }} className='lg:h-10 w-4/5 lg:w-0'></div>
+    </div>
+>>>>>>> origin
 
         <div className='mt-16'>
         </div>
 
+<<<<<<< HEAD
         <Carousel>
+=======
+    <Carousel>
+>>>>>>> origin
           {
             items && items.map((i, index) => {
               return <div key={index} className='flex justify-center items-center'>
                 <div style={{ width: 681, height: 625, borderRadius: '26px', position: 'relative' }} className='bg-white'>
+<<<<<<< HEAD
                   <SingleModelView zoom={130} radius={'26px'} modelUrl={'/popeye.glb'} />
+=======
+                  <SingleModelView zoom={130} radius={'26px'} modelUrl={'/popeye.glb'}/>
+>>>>>>> origin
                 </div>
               </div>
             })
           }
+<<<<<<< HEAD
         </Carousel>
+=======
+    </Carousel>
+>>>>>>> origin
 
         <div className='flex justify-center'>
           <div className='flex items-center lg:flex-row flex-col text-white' style={{ maxWidth: "681px" }}>

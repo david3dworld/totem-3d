@@ -11,7 +11,7 @@ import discordIcon from '../images/discord-icon.svg'
 import { useRouter } from 'next/router'
 import polygon1 from "../images/polygon-matic-logo.png"
 import styled from 'styled-components'
-import { getPurchasedProducts, getProducts, getProductsByCollectionIds } from '../api/product'
+import { getPurchasedProducts, getProductsByCollectionIds } from '../api/product'
 import { getBrands } from '../api/brand'
 import { getProfile } from '../api/user'
 import Modal from 'react-modal';
@@ -23,6 +23,7 @@ import SingleModelView from './components/singleModelView/index'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import Link from 'next/link';
+<<<<<<< HEAD
 import CONTRACT_ADDRESS from '../contracts/address'
 import music from "../images/Icon awesome-music.svg"
 import movies from "../images/Icon material-local-movies.svg"
@@ -39,6 +40,8 @@ const categoryIcon = {
   comics,
   art
 }
+=======
+>>>>>>> origin
 const customStyles = {
   content: {
     top: '50%',
@@ -50,7 +53,11 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
   },
 };
+<<<<<<< HEAD
 
+=======
+const CONTRACT_ADDRESS = "0x5629b4d18c0B93377F5f28e544929a42ec004724"
+>>>>>>> origin
 export default function dashboard() {
 
   const { authenticate, isAuthenticated, isInitialized, account, chainId, Moralis, logout } = useMoralis();
@@ -109,17 +116,28 @@ export default function dashboard() {
     }
     const fetchData = async () => {
       const userEthNFTs = await Web3Api.account.getNFTs({ chain: "mumbai", address: account })
+<<<<<<< HEAD
+=======
+      console.log("userEthNfts------->", userEthNFTs)
+>>>>>>> origin
       setNfts([...userEthNFTs.result])
+      setLoading(false)
       return userEthNFTs;
     }
 
 
     if (account) {
+<<<<<<< HEAD
       const result = fetchData()
+=======
+      const result =  fetchData()
+
+>>>>>>> origin
     } else {
       getPurchasedProducts((error, res) => {
         if (res && res.data) {
           const result = flattenNFTs(res.data)
+          console.log('getPurchasedProducts result', result);
           setLoading(false)
           setFilteredNfts(result)
         }
@@ -148,8 +166,18 @@ export default function dashboard() {
         }
       }
 
+<<<<<<< HEAD
       setFilteredNfts(tempList)
     })
+=======
+      })
+      const ids = filtered.map((nft) => nft.token_id)
+      console.log('ids', ids);
+      getProductsByCollectionIds(ids.join(","), (error, res) => {
+        setFilteredNfts(res.data.result)
+      })
+    }
+>>>>>>> origin
   }, [nfts])
 
   useEffect(() => {
@@ -165,6 +193,7 @@ export default function dashboard() {
       }
 
     })
+    console.log(productsMap)
 
 
     let recordLength = 0
@@ -181,9 +210,12 @@ export default function dashboard() {
   useEffect(() => {
     const selectedBrand = brands[selectedBrandIndex]
     const tempList = filteredNfts.filter((nft) => nft && nft.brandId && nft.brandId === selectedBrand._id)
+<<<<<<< HEAD
     tempList.sort((x, y) => {
       return new Date(x.createdAt) < new Date(y.createdAt) ? 1 : -1
     })
+=======
+>>>>>>> origin
     setBrandFilteredNfts(tempList)
   }, [filteredNfts, selectedBrandIndex])
 
@@ -323,6 +355,7 @@ export default function dashboard() {
                   })
                 }
               </div>
+<<<<<<< HEAD
               <div className='flex flex-col lg:flex-row items-center mt-10 flex-wrap'>
                 {!loading && brandFilteredNfts.length == 0 && <span className='text-2xl text-white font-bold'>No result</span>}
                 {brandFilteredNfts.map(function (data, index) {
@@ -344,6 +377,32 @@ export default function dashboard() {
                                 paddingRight: 0
                               }}
                               isHasControl={false} />}
+=======
+              <div className='flex flex-col lg:flex-row items-center mt-10'>
+                {!loading && brandFilteredNfts.length == 0 && <span className='text-2xl text-white font-bold'>No result</span>}
+                {brandFilteredNfts.map(function (data, index) {
+                  return (
+                    <div key={index} style={{ background: "#161A42", width: "200px", height: "456px" }} className='mx-3 mt-0 w-full lg:w-max rounded-lg'>
+                      <div style={{ borderRadius: '8px', height: "230px", width: '100%' }} className=' bg-white'>
+                        {/* <div className='relative top-2 left-2'>
+                          <Image height={20} width={60} src={bg}></Image>
+                        </div> */}
+                        <div style={{ borderRadius: '8px', width: '100%', height: "100%" }} className=' flex justify-center items-center'>
+                          <div className='h-60' style={{ position: "relative", width: '100%', height: "100%" }}>
+                            {(!data?.image3D || data?.image3D.toLowerCase().includes("undefined")) && data?.imageUrl && <Image width={200} height={230} src={data?.imageUrl}></Image>}
+                            {data?.image3D && !data?.image3D.toLowerCase().includes("undefined") && <SingleModelView 
+                            modelUrl={data.image3D} 
+                            radius='8px' 
+                            zoom={0}
+                            isFitZoom={true}
+                            padding={{
+                              paddingTop: 0,
+                              paddingLeft: 0,
+                              paddingBottom: 0,
+                              paddingRight: 0
+                            }}
+                            isHasControl={false}/>}
+>>>>>>> origin
                           </div>
                         </div>
                       </div>
@@ -355,7 +414,7 @@ export default function dashboard() {
                       <div className='p-3 relative bottom-7'>
                         <p className='text-lg text-white text-left line-clamp-2 h-14'>{data.name}</p>
 
-                        <div className='relative flex items-center mt-3'>
+                        <div className='relative flex items-center mt-5'>
                           <p className='text-white'>{data?.scaracity}</p>
                           <p className='absolute right-0 text-white'>{data?.series}</p>
                         </div>
@@ -376,6 +435,7 @@ export default function dashboard() {
                         <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
                         </div>
                         <div className='flex'>
+<<<<<<< HEAD
                           <Link href={`/3d/${data._id}`}>
                             <div className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900'>
                               <p className='text-white  text-sm font-bold'>VIEW</p>
@@ -385,6 +445,19 @@ export default function dashboard() {
                             className='w-1/2 flex items-center justify-center py-2' >
                             <p className='text-gray-400 cursor-no-drop text-sm font-bold'>SELL</p>
                           </div>
+=======
+                        <Link href={`/3d/${data._id}`}>
+                          <div className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900'>
+                            <p className='text-white  text-sm font-bold'>VIEW</p>
+                          </div>
+                          </Link>
+                          {/* {
+                          account && */}
+                          <div style={{ borderLeft: '1px solid #2E357B' }}
+                            className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900' onClick={() => { setSelectedNft(data); setShowTransferModal(true) }}>
+                            <p className='text-white text-sm font-bold'>SELL</p>
+                          </div>
+>>>>>>> origin
                           {/* } */}
                         </div>
                       </div>

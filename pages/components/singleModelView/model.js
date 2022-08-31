@@ -55,6 +55,7 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
       }
 
     useEffect(() => {
+<<<<<<< HEAD
 
         if(!itemGroup || !itemGroup.userData.name) return
 
@@ -69,6 +70,20 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
             })
         }
     }, [itemGroup])
+
+    useEffect(() => {
+        return () => {
+            if(music && music.isPlaying) {
+                music.stop()
+            }
+        }
+    }, [music])
+=======
+        loadMusic().then(rs => {
+            setMusic(rs);
+        })
+    }, [])
+>>>>>>> origin
 
     useEffect(() => {
         return () => {
@@ -104,7 +119,11 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
             const music = new Audio(listener)
             const loader = new AudioLoader()
 
+<<<<<<< HEAD
             loader.load(url, buffer => {
+=======
+            loader.load('/POPEYE_PREMIUM_AUDIO.mp3', buffer => {
+>>>>>>> origin
                 music.setBuffer(buffer)
                 music.setLoop(true)
                 music.setVolume(1)

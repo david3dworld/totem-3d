@@ -12,6 +12,7 @@ import instagram from "../../images/instagram.png"
 
 import polygon1 from "../../images/polygon-matic-logo.png"
 import SingleModelView from '../components/singleModelView/index'
+import BabylonModelView from '../components/BabylonModelView'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import Link from 'next/link'
@@ -167,10 +168,16 @@ export default function product() {
           </div>
         </div>
 
+<<<<<<< HEAD
         <div className='mt-16 flex lg:flex-row flex-col px-5 lg:px-0'>
           <div className='relative lg:w-4/12' style={{ background: 'white', height: "525px", borderRadius: '20px' }}>
             {!product?.image3D && product?.imageUrl && <Image width={393} height={525} src={product?.imageUrl}></Image>}
             {product?.image3D && <SingleModelView 
+=======
+        <div className='mt-16 flex lg:flex-row flex-col'>
+          <div className='relative lg:w-4/12' style={{ background: 'white', height: "525px", width: "393px", borderRadius: '20px' }}>
+          {Object.keys(product).length != 0 && <SingleModelView 
+>>>>>>> origin
                 modelUrl={product.image3D ? product.image3D : null} 
                 radius='20px'
                 key={product._id}

@@ -179,7 +179,11 @@ const SingleModelView = ({
 
                 data.scene.traverse((o) => {
                     if (o.isMesh) {
+<<<<<<< HEAD
                         o.material.roughness = 0.8
+=======
+                        o.material.roughness = 1
+>>>>>>> origin
                         o.material.transparent = true;
                         o.material.opacity = 0.1;
                         o.material.flatShading = false;
@@ -190,7 +194,11 @@ const SingleModelView = ({
                         o.receiveShadow = true;
                         o.castShadow = true;
 
+<<<<<<< HEAD
                         o.material.shadowSide = BackSide
+=======
+                        o.material.side = FrontSide
+>>>>>>> origin
                     }
                 });
                 // data.scene.receiveShadow = true;
