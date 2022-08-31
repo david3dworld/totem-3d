@@ -1,28 +1,42 @@
-import React from 'react'
-import Navbar from "./navbar/index"
-import bg from "../images/Bg.png"
+import React, { useEffect, useState } from 'react'
+import Navbar from "../navbar/index"
+import bg from "../../images/Bg.png"
 import Image from 'next/image'
-import Footer from './footer'
-import discord from "../images/discord.png"
-
+import Footer from '../footer'
+import discord from "../../images/discord.png"
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
-import SingleModelView from './components/singleModelView';
+import SingleModelView from '../components/singleModelView';
+import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 import Link from 'next/link'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { useMoralis, useMoralisWeb3Api } from 'react-moralis';
 
 export default function ThreeD() {
   const { authenticate, isAuthenticated, isInitialized, account, chainId, Moralis, logout } = useMoralis();
+  const [product, setProduct] = useState([]);
   const [profileInfo, setProfileInfo] = useState([])
-
-  const items = [1, 2, 3, 4, 5]
-
+  const router = useRouter()
   const token = useSelector(function (state) {
     return state.token;
-  })
+  });
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/${router.query.id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(function (data) {
+      setProduct([data.data])
+    }).catch(function (error) {
+      console.log(error);
+    })
+
+  }, [router.isReady, router])
+
   useEffect(() => {
     if (!token && !account) {
       toast.error("You should login/signup first");
@@ -63,10 +77,30 @@ export default function ThreeD() {
 
         <Carousel>
           {
-            items && items.map((i, index) => {
+            product && product.map((i, index) => {
               return <div key={index} className='flex justify-center items-center'>
-                <div style={{ width: 681, height: 625, borderRadius: '26px', position: 'relative' }} className='bg-white'>
-                  <SingleModelView zoom={130} radius={'26px'} modelUrl={'/popeye.glb'} />
+                <div style={{ maxWidth: 681, height: 625, borderRadius: '26px', position: 'relative' }} className='bg-white w-full'>
+                  {
+                    (!i.image3D || i.image3D.toLowerCase().includes('undefined')) && <Image layout='fill' objectFit='contain' style={{ borderRadius: '26px' }} src={i.imageUrl}></Image>
+                  }
+                  {
+                    (i.image3D && !i.image3D.toLowerCase().includes('undefined')) && <SingleModelView 
+                    radius={'26px'} 
+                    modelUrl={i.image3D}  
+                    zoom={0}
+                    isFitZoom={true}
+                    padding={{
+                      paddingTop: 0.2,
+                      paddingLeft: 0.2,
+                      paddingBottom: 0.2,
+                      paddingRight: 0.2
+                    }}
+                    loadingWidth="40%"
+                    loadingHeight="40%"
+                    showLoadedPecent={true}
+                    loadingBackgroundUrl={i.imageUrl ? i.imageUrl : ''}
+                    />
+                  }
                 </div>
               </div>
             })
@@ -76,19 +110,19 @@ export default function ThreeD() {
         <div className='flex justify-center'>
           <div className='flex items-center lg:flex-row flex-col text-white' style={{ maxWidth: "681px" }}>
             <div className='w-32'>
-              <p className='text-xl' style={{overflowWrap: 'anywhere'}}>Popeye the Sailor Man</p>
+              <p className='text-xl' style={{overflowWrap: 'anywhere'}}>{product[0]?.name}</p>
             </div>
             <div style={{ border: "1px solid #E0E3FF" }} className='lg:mx-8 my-4 lg:my-0 h-0 w-4/5 lg:w-0 lg:h-8'>
             </div>
             <div className=''>
-              <p style={{ fontFamily: "Poppins" }}>#00768/10k</p>
+              <p style={{ fontFamily: "Poppins" }}>{product[0]?.productNo}/{product[0]?.maxCap}</p>
             </div>
             <div style={{ border: "1px solid #E0E3FF" }} className='lg:mx-8 my-4 lg:my-0 h-0 w-4/5 lg:w-0 lg:h-8'>
             </div>
-            <p>Serie 1</p>
+            <p>{product[0]?.series}</p>
             <div style={{ border: "1px solid #E0E3FF" }} className='lg:mx-8 my-4 lg:my-0 h-0 w-4/5 lg:w-0 lg:h-8'>
             </div>
-            <p className=' font-bold'>COMMON</p>
+            <p className=' font-bold'>{product[0]?.scaracity}</p>
             <div style={{ border: "1px solid #E0E3FF" }} className='lg:mx-8 my-4 lg:my-0 h-0 w-4/5 lg:w-0 lg:h-8'>
             </div>
             {/* <div style={{ color : "#0EA8D6" }} className="flex items-center w-40">

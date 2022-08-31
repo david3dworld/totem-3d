@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/inline-script-id */
 import '../styles/globals.css'
 import { Provider } from "react-redux";
 import {NotificationContainer, NotificationManager} from 'react-notifications';

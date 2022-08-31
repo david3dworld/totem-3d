@@ -30,7 +30,7 @@ export default function ForgetPassword() {
                                 <ToastContainer />
                                 <div onClick={function () {
                                     setLoading(true)
-                                    axios.get(`https://shop.totem-universe.io/auth/email/forgot-password/${email}`, {
+                                    axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/email/forgot-password/${email}`, {
                                         headers: {
                                             'Content-Type': 'application/json'
                                         }

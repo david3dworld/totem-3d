@@ -18,20 +18,63 @@ export default function ResetPassword() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        if (isCPasswordDirty) {
-            if (password === cPassword) {
-                setShowErrorMessage(false);
-                setCPasswordClass('form-control is-valid')
-            } else {
-                setShowErrorMessage(true)
-                setCPasswordClass('form-control is-invalid')
-            }
+        if (password === cPassword) {
+            setShowErrorMessage(false);
+            setIsCPasswordDirty(false)
+            setCPasswordClass('form-control is-valid')
+        } else {
+            setShowErrorMessage(true)
+            setCPasswordClass('form-control is-invalid')
         }
-    }, [cPassword])
+    }, [password, cPassword])
 
     const handleCPassword = (e) => {
         setCPassword(e.target.value);
         setIsCPasswordDirty(true);
+    }
+    const resetPassword = (e) => {
+        try {
+            setLoading(true)
+            axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/email/reset-password/`, {
+                "email": email,
+                "newPassword": password,
+                "newPasswordToken": router.query.val,
+                "currentPassword": ""
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (data) {
+                console.log(data);
+                setLoading(false)
+
+                if (data.data.success) {
+                    toast.success("Password changes successfully");
+                    router.push('/')
+                }
+                else {
+                    toast.error("Changing password is not successfull, please try again later");
+                }
+            }).catch(function (error) {
+
+                setLoading(false)
+
+                if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+            })
+        } catch (error) {
+            console.log("click error--->", error)
+        }
     }
     return (
         <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Poppins" }} className='text-sm flex flex-col items-center'>
@@ -44,62 +87,23 @@ export default function ResetPassword() {
                             <div style={{ border: "1px solid #2C3166", borderRadius: "100px", color: "#919CC1" }} className='w-full h-10 mt-4 '>
                                 <input onChange={function (e) {
                                     setEmail(e.target.value);
-                                }} type="email" style={{ borderRadius: "100px" }} className='w-full h-full p-2' placeholder='Your email'></input>
+                                }} type="email" style={{ borderRadius: "100px" }} className='w-full h-full py-2 px-4' placeholder='Your email' required></input>
                             </div>
                             <div style={{ border: "1px solid #2C3166", borderRadius: "100px", color: "#919CC1" }} className='w-full h-10 mt-4 '>
                                 <input onChange={function (e) {
                                     setPassword(e.target.value);
-                                }} type="password" style={{ borderRadius: "100px" }} className='w-full h-full p-2' placeholder='Your new password'></input>
+                                }} type="password" style={{ borderRadius: "100px" }} className='w-full h-full py-2 px-4' placeholder='Your new password' required></input>
                             </div>
 
                             <div style={{ border: "1px solid #2C3166", borderRadius: "100px", color: "#919CC1" }} className='w-full h-10 mt-4 '>
                                 <input onChange={handleCPassword}
-                                    type="password" style={{ borderRadius: "100px" }} className='w-full h-full p-2' placeholder='Confirm new password'></input>
+                                    type="password" style={{ borderRadius: "100px" }} className='w-full h-full py-2 px-4' placeholder='Confirm new password'></input>
                             </div>
                             {showErrorMessage && isCPasswordDirty ? <div className='text-red-500'> Passwords did not match </div> : ''}
 
                             <div className='flex items-center'>
                                 <ToastContainer />
-                                <button onClick={function () {
-                                    setLoading(true)
-                                    axios.post(`https://shop.totem-universe.io/auth/email/reset-password/`, {
-                                        "email": email,
-                                        "newPassword": password,
-                                        "newPasswordToken": router.query.val,
-                                        "currentPassword": ""
-                                    }, {
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        }
-                                    }).then(function (data) {
-                                        console.log(data);
-                                        setLoading(false)
-
-                                        if (data.data.success) {
-                                            toast.success("Password changes successfully");
-                                            router.push('/')
-                                        }
-                                        else {
-                                            toast.error("Changing password is not successfull, please try again later");
-                                        }
-                                    }).catch(function (error) {
-
-                                        setLoading(false)
-
-                                        if (error.response) {
-                                            // Request made and server responded
-                                            console.log(error.response.data);
-                                            console.log(error.response.status);
-                                            console.log(error.response.headers);
-                                        } else if (error.request) {
-                                            // The request was made but no response was received
-                                            console.log(error.request);
-                                        } else {
-                                            // Something happened in setting up the request that triggered an Error
-                                            console.log('Error', error.message);
-                                        }
-                                    })
-                                }} style={{ borderRadius: '100px', background: "#161A42" }}
+                                <button onClick={() => resetPassword()} style={{ borderRadius: '100px', background: "#161A42" }}
                                     disabled={isCPasswordDirty}
                                     className='w-36 ml-4 cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4 relative h-7'>
                                     {loading && <div className="ld ld-ring ld-spin text-white"></div>}

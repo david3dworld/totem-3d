@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+    https://github.com/tailwindlabs/tailwindcss/discussions/2394
+    https://github.com/tailwindlabs/tailwindcss/pull/5732
+*/
+@layer utilities {
+
+    /* Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+}
+
+.slick-track {
+    margin-left: 0px !important;
+}
+
 .bg-home {
     background-image: url(../images//bgHome.png);
 }
@@ -20,7 +43,6 @@
     background: #161A42;
     border-radius: 16px;
     height: 271px;
-    width: 194px;
 }
 
 .bg-collection {
@@ -33,8 +55,11 @@
     }
 
     .bg-collection {
-        background-position: left;
-    }
+        /* background-position: left; */
+        width: calc(100% - 30px);
+        margin-left: auto;
+        margin-right: auto;
+    } 
 
     .product-img {
         width: 431px
@@ -141,29 +166,37 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-   
-} 
-.category .music{
+
+}
+
+.category .music {
     width: 18px !important;
 }
-.category .movies{
+
+.category .movies {
     width: 14px !important;
 }
-.category .games{
+
+.category .games {
     width: 20px !important;
 }
-.category .sports{
+
+.category .sports {
     width: 19px !important;
 }
-.category .comics{
+
+.category .comics {
     width: 19px !important;
 }
-.category .art{
+
+.category .art {
     width: 22px !important;
 }
-.copyright{
+
+.copyright {
     font-size: 10px;
 }
+
 .control-group {
     height: fit-content;
     width: fit-content;
@@ -197,6 +230,40 @@ body {
     width: 70%;
 }
 
+.p-2-5 {
+    padding: 10px;
+}
+
+.line-height-24 {
+    line-height: 24px !important;
+}
+
+.text-capitalize {
+    text-transform: capitalize;
+}
+
+.line-clamp-2 {
+    text-overflow: ellipsis;
+    display: block;
+}
+.bg-dark-blue {
+    background: #161A42
+}
+@media screen and (max-width: 768px) {
+    .bg-top {
+        height: 331px;
+        width: calc(100% - 30px);
+    }
+
+    .product-parent {
+        width: 100% !important;
+    }
+
+    .bg-jeep {
+        width: 100%;
+    }
+}
+
 .btn-update-bg {
     padding: 20px 40px;
     background-color: black;
@@ -228,4 +295,13 @@ body {
     background-image: url('/LOADING_LOOP.gif');
     background-repeat: no-repeat;
     background-size: contain;
+}
+.loading-model-3D{
+    background: rgba(53, 188, 230, 0.8);
+    color: #FFF;
+    padding: 5px 20px;
+    border-radius: 10px;
+    font-size: initial;
+    text-align: center;
+    max-width: 100%;
 }

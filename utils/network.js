@@ -1,10 +1,11 @@
 import { toast } from 'react-toastify'
 
 // export const network = process.env.ETH_USED_NETWORK || 'rinkeby'
-export const network = 'rinkeby'
+export const network = 'mumbai'
 
 export const networkIdMapper = {
   mainnet: 1,
+  mumbai: 80001,
   rinkeby: 4,
   hardhat: 31337, // default hardhat localhost
   ganache: 1337, // default gananche localhost
@@ -31,6 +32,8 @@ export const getNetworkName = (chainId) => {
     // rinkeby will be deprecated
     '0x4': 'rinkeby',
     rinkeby: 'rinkeby',
+    '0x80001': 'mumbai',
+    mumbai: 'mumbai',
   }
 
   return network[chainId]

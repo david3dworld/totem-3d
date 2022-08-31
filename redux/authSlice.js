@@ -44,7 +44,9 @@ export const authSlice = createSlice({
             state.isloggedin = true;
         },
         logout(state) {
+            localStorage.removeItem('access_token')
             state.token = null;
+            state.emailOrWallet = null;
         },
         authToken(state, actions) {
             state.token = actions.payload;

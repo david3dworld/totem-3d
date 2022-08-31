@@ -286,7 +286,8 @@ export default function Gold() {
                       <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
                       </div>
                       <div className='flex items-center justify-center mt-2'>
-                      <p className='text-white cursor-pointer'>COLLECT</p>
+                        {data && data.mintedCount < data.maxCap && <p className='text-white cursor-pointer'>COLLECT</p>} 
+                        {data && data.mintedCount >= data.maxCap && <p className='text-white cursor-pointer'>SOLD OUT</p>} 
                       </div>
                     </div>
                   </div>
@@ -336,7 +337,8 @@ export default function Gold() {
                       <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
                       </div>
                       <div className='flex items-center justify-center mt-2'>
-                      <p className='text-white cursor-pointer'>COLLECT</p>
+                        {data && data.mintedCount < data.maxCap && <p className='text-white cursor-pointer'>COLLECT</p>} 
+                        {data && data.mintedCount >= data.maxCap && <p className='text-white cursor-pointer'>SOLD OUT</p>} 
                       </div>
                     </div>
                   </div>

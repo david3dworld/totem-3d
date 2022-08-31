@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+
 import totem from '../../images/totem.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -6,12 +8,13 @@ import Link from 'next/link'
 import fox from "../../images/foxR.png"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useSelector, useDispatch } from 'react-redux'
-import wallet from "../../images/Icon_Wallet.png"
 import { useMoralis } from 'react-moralis'
 import { logout } from '../../redux/authSlice'
 import AccountModal from './AccountModal'
+import defaultProfilePicture from "../images/../../images/Bg.png"
+
 export default function NavBar() {
-  const { isAuthenticated, authenticate, logout: moralisLogout, account,Moralis,user } = useMoralis();
+  const { isAuthenticated, authenticate, logout: moralisLogout, account, Moralis, user } = useMoralis();
   const [isAccountSectionVisible, setAccountSectionVisiblity] = useState(false)
   const onToggleAccount = () => setAccountSectionVisiblity(state => !state)
   const router = useRouter();
@@ -28,37 +31,56 @@ export default function NavBar() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(search.length>0){
+    if (search.length > 0) {
       router.push(`/search/${search}`)
     }
   };
-  function check(){
-    if (result != ""){
+  function check() {
+    if (result != "") {
       return result;
     }
     else {
       return emailOrWallet;
     }
   }
-  const [wallet2,setWallet2] = useState("");
+  const [wallet2, setWallet2] = useState("");
   const currentUser = Moralis.User.current();
-  const [result,setResult] = useState("");
-var turn = false;
-  useEffect(function(){
-    console.log('currentUser', currentUser)
-    if (currentUser){
-      console.log('currentUser', currentUser.get("ethAddress"))
+  const [result, setResult] = useState("");
+  const [profileInfo, setProfileInfo] = useState()
+  useEffect(() => {
+    const closeDropdown = e =>{
+      setAccountSectionVisiblity(false)
+    }
+    document.body.addEventListener('click', closeDropdown)
+
+    const fetchUserData = async () => {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/myProfile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (data) {
+        setProfileInfo(data.data.data)
+      }
+    }
+    if (token) {
+      fetchUserData()
+    }
+  }, [token])
+  useEffect(function () {
+    if (currentUser) {
       setWallet2(currentUser.get("ethAddress"));
+    }
+    if (wallet2) {
+      const trimmedWallet = wallet2.substring(0, 4)
+      setResult(trimmedWallet);
+    }
+  }, [currentUser, wallet2]);
+  function checkWallet() {
+    if (result != "") {
+      return result;
+    }
   }
-  if (wallet2 != ""){
-    setResult(wallet2[0] + wallet2[1] + wallet2[2] + wallet2[3]);
-}
-},[currentUser,wallet2]);
-function checkWallet(){
-  if (result != ""){
-    return result;
-  }
-}
   const onLogout = async () => {
     if (account) {
       await moralisLogout();
@@ -67,6 +89,8 @@ function checkWallet(){
       dispatch(logout());
       router.push('/');
     }
+    setResult("")
+    setProfileInfo()
     onToggleAccount()
   }
   return (
@@ -117,10 +141,10 @@ function checkWallet(){
                   }} style={{ border: "1px solid  #2C3166" }} className=' hover:opacity-80 rounded-full cursor-pointer  py-1 px-2'>
                     <a href='#' className='m-1'>Brands</a>
                   </div>
-                  <div onClick={function(){
-                    router.push("categories");
-                  }} style={{ border : "1px solid  #2C3166" }} className='rounded-full cursor-pointer  py-1 px-2'>
-                  <a className='m-1'>Categories</a>
+                  <div onClick={function () {
+                    router.push("/categories");
+                  }} style={{ border: "1px solid  #2C3166" }} className='rounded-full cursor-pointer  py-1 px-2'>
+                    <a className='m-1'>Thematics</a>
                   </div>
                   <div>
                     <div style={{ background: "#161A42" }} className='rounded-full w-72 h-10 flex items-center ml-2 '>
@@ -135,22 +159,6 @@ function checkWallet(){
                       </form>
                     </div>
                   </div>
-                  <div className='flex items-center'>
-                    <div onClick={function () {
-                      // authenticate();
-                      router.push("/dashboard");
-                    }} className='lg:ml-3 flex items-center cursor-pointer  hover:opacity-80'>
-                      {/* {router.asPath == "/dashboard" || router.asPath == "/product"
-                        ?
-                        <Image width={32} height={29} src={fox}></Image>
-                        :
-                        <Image width={36} height={34} src={wallet}></Image>} */}
-
-                      {account && <Image width={32} height={29} src={fox}></Image>}  
-                      {(token || !account) && <Image width={36} height={34} src={wallet}></Image>}  
-
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -158,34 +166,40 @@ function checkWallet(){
 
               <div className="lg:ml-3 relative">
                 <div className='flex items-center'>
-                  {(token || account)
-                    ?
-                    <div onClick={async () => {
-                      if (account) {
-                        await moralisLogout();
-                        router.push('/');
-                      } else {
-                        dispatch(logout());
-                        router.push('/');
-                      }
-                    }} className='cursor-pointer hover:opacity-80 hidden lg:block mr-3 '> <p className=''>{check()}, Log Out</p></div>
-                    :
+                  {(token || account) &&
+                    <div onClick={() => {
+                      onToggleAccount()
+                    }} className='cursor-pointer hover:opacity-80 hidden lg:block mr-3 '> <p className=''>
+                        {account ? check() : emailOrWallet}
+                      </p></div>
+                  }
+                  {(!token && !account) &&
                     <div onClick={function () {
                       router.push("/login1");
                     }} className='  hover:opacity-80 cursor-pointer hidden lg:block  mr-3 '>
                       <p>login / sign up</p>
                     </div>
-                }
+                  }
                   <button type="button" className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span className="sr-only">Open user menu</span>
-                    <div onClick={function () {
-                      if(account) {
-                        onToggleAccount()
-                      } else {
-                        router.push("/profile");
+                    <div onClick={(e) => {
+                      e.stopPropagation()
+                      if (!profileInfo && !account) {
+                        router.push("/login1");
+                        return;
                       }
+                      onToggleAccount()
                     }}>
-                      <AccountCircleIcon fontSize='large' />
+                      {account || profileInfo ? (
+                        <div className='rounded-full overflow-hidden h-8 w-8'>
+                          <Image
+                            height={32}
+                            width={32}
+                            src={profileInfo?.profilepicture || defaultProfilePicture}
+                            alt='profile picture'
+                          />
+                        </div>
+                      ) : <AccountCircleIcon fontSize='large' />}
                     </div>
                   </button>
                 </div>
@@ -193,11 +207,12 @@ function checkWallet(){
             </div>
           </div>
         </div>
+        <AccountModal isVisible={isAccountSectionVisible} onLogout={onLogout} />
 
         <div className="hidden lg:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 flex flex-col items-center">
             <div style={{ border: "1px solid  #2C3166" }} className='rounded-full w-24 flex items-center justify-center'>
-            <Link href='/#lastdrops' className='m-1'>Last Drops</Link>
+              <Link href='/#lastdrops' className='m-1'>Last Drops</Link>
             </div>
             <div style={{ border: "1px solid  #2C3166" }} className='rounded-full w-24 flex items-center justify-center '>
               <a onClick={function () {
@@ -209,7 +224,7 @@ function checkWallet(){
             }} style={{ border: "1px solid  #2C3166" }} className='rounded-full w-24 flex items-center justify-center '>
               <a className='m-1'>Categories</a>
             </div>
-         
+
             <div style={{ background: "#161A42" }} className='rounded-full w-72 h-10 flex items-center '>
               <form onSubmit={handleSubmit} className="flex items-center">
                 <input placeholder='Search by brand, collection...'
@@ -221,19 +236,6 @@ function checkWallet(){
                 </button>
               </form>
             </div>
-            <div className='flex items-center'>
-                    <div onClick={function () {
-                      // authenticate();
-                      router.push("/dashboard");
-                    }} className='lg:ml-3 flex items-center cursor-pointer  hover:opacity-80'>
-                      {router.asPath == "/dashboard" || router.asPath == "/product"
-                        ?
-                        <Image width={32} height={29} src={fox}></Image>
-                        :
-                        <Image width={36} height={34} src={wallet}></Image>}
-
-                    </div>
-                  </div>
             {token
               ?
               <div onClick={function () {
@@ -249,7 +251,6 @@ function checkWallet(){
             }
           </div>
         </div>
-      <AccountModal isVisible={isAccountSectionVisible} onLogout={onLogout} />
       </nav>
     </div>
   )
