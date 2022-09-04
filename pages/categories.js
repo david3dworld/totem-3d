@@ -97,7 +97,11 @@ export default function Categories() {
             </div>}
             {/* mobile loading */}
             {loadingProduct && <div className='w-full lg:hidden'>
+<<<<<<< HEAD
               <Skeleton containerClassName='flex justify-between items-center' className='loading-bar' inline={true} count={2} height={'170px'} width={'150px'} />
+=======
+              <Skeleton containerClassName='flex justify-between flex-col items-center' className='loading-bar' inline={true} count={2} height={'170px'} width={'150px'} />
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
             </div>}
           </div>
           <div className='mt-5 px-2 lg:px-8 flex w-full flex-wrap justify-around'>
@@ -114,6 +118,7 @@ export default function Categories() {
                 maxCap,
                 mintedCount,
                 _id,
+<<<<<<< HEAD
                 is_comming_soon,
                 comming_soon_image_url
               } = data
@@ -136,6 +141,24 @@ export default function Categories() {
                     id={_id}
                   />
                 </div>
+=======
+              } = data
+              return (
+                <ProductItem
+                  key={index}
+                  imageUrl={imageUrl}
+                  name={name}
+                  thematics={thematics}
+                  scarcity={scaracity}
+                  series={series}
+                  priceUsd={priceUsd}
+                  priceMatic={priceMatic}
+                  productNo={productNo}
+                  maxCap={maxCap}
+                  mintedCount={mintedCount}
+                  id={_id}
+                />
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
               )
             })}
           </div>

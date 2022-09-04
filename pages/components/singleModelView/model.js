@@ -55,6 +55,10 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
       }
 
     useEffect(() => {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
 
         if(!itemGroup || !itemGroup.userData.name) return
 
@@ -77,6 +81,23 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
             }
         }
     }, [music])
+<<<<<<< HEAD
+=======
+=======
+        loadMusic().then(rs => {
+            setMusic(rs);
+        })
+    }, [])
+>>>>>>> origin
+
+    useEffect(() => {
+        return () => {
+            if(music && music.isPlaying) {
+                music.stop()
+            }
+        }
+    }, [music])
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
 
     const onPlayAnimation = () => {
         if (mixer && animations.length > 0) {
@@ -104,7 +125,15 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
             const music = new Audio(listener)
             const loader = new AudioLoader()
 
+<<<<<<< HEAD
             loader.load(url, buffer => {
+=======
+<<<<<<< HEAD
+            loader.load(url, buffer => {
+=======
+            loader.load('/POPEYE_PREMIUM_AUDIO.mp3', buffer => {
+>>>>>>> origin
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                 music.setBuffer(buffer)
                 music.setLoop(true)
                 music.setVolume(1)

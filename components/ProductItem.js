@@ -36,9 +36,13 @@ const ProductItem = (props) => {
     mintedCount,
     id,
     index,
+<<<<<<< HEAD
     image3D,
     isComingSoon,
     comingSoonImageUrl
+=======
+    image3D
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
   } = props
   const router = useRouter()
   const isMaxedOut = mintedCount >= maxCap
@@ -123,6 +127,7 @@ const ProductItem = (props) => {
   return (
     <button onClick={onPress} className='flex items-center justify-center w-[200px] product-parent'>
       <div className='p-1 bg-jeep'>
+<<<<<<< HEAD
         <div className='bg-white m-2 rounded-lg flex flex-col justify-center'>
           <div className='flex justify-center items-center'>
             <div className='w-full lg:h-48 relative'>
@@ -132,6 +137,16 @@ const ProductItem = (props) => {
                   className='rounded-lg overflow-hidden h-[192px] width-full relative'>
                   <Image
                     src={isComingSoon && comingSoonImageUrl ? comingSoonImageUrl : imageUrl}
+=======
+        <div className='bg-white m-2 rounded-lg'>
+          <div className='flex justify-center items-center'>
+            <div className='w-full lg:h-48 relative'>
+              {
+                (!loadingItems.find(item => item.index == index) || (loadingItems.find(item => item.index == index) && loadingItems.find(item => item.index == index).progress != 100)) && <div
+                  style={{ height: 192, width: widthItem, position: "relative" }}>
+                  <Image
+                    src={imageUrl}
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                     alt={`${name}-asset`}
                     width="100%"
                     height="100%"

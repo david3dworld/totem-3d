@@ -45,7 +45,11 @@ export default function Payment1() {
         }).catch(function (error) {
             console.log(error);
         })
+<<<<<<< HEAD
         if (user) {
+=======
+        if (account) {
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
             setPaymentMethod('pay_with_matic')
         }
         if (token) {
@@ -150,6 +154,34 @@ export default function Payment1() {
             }
         }
     }
+<<<<<<< HEAD
+=======
+    const onClickCc = () => {
+        setPaymentMethod('pay_with_cc')
+    }
+    const onClickMatic = () => {
+        setPaymentMethod('pay_with_matic')
+    }
+    const onPressBuyNow = () => {
+        if (selectedPaymentMethod === 'pay_with_matic' && userEmail) {
+            toast.error('Invalid payment method')
+            return
+        }
+        if (selectedPaymentMethod === 'pay_with_cc' && account) {
+            toast.error('Invalid payment method')
+            return
+        }
+        if (!token && !account) {
+            router.push(`/login1?returnUrl=/payment/${router.query.id}`)
+        } else {
+            if (account && selectedPaymentMethod === 'pay_with_matic') {
+                onCollect()
+            } else {
+                router.push(`/card/${router.query.id}`)
+            }
+        }
+    }
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
     return (
         <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Chakra Petch" }} className='text-sm flex w-full flex-col items-center'>
             <div className='max-w-7xl w-full'>
@@ -209,7 +241,11 @@ export default function Payment1() {
 
                         <div className='lg:pl-12 flex flex-1 flex-col h-full mt-4 lg:mt-0' >
                             <form>
+<<<<<<< HEAD
                                 {userEmail && !user && (
+=======
+                                {userEmail && !account && (
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                                     <div className='flex'>
                                         <div className='border-2 rounded-full mt-2 h-4 w-4 border-accent flex items-center justify-center'>
                                             <input type='radio' defaultChecked id='radio-cc' name='method' onClick={onClickCc} className='cursor-pointer appearance-none h-2 w-2 rounded-full h-full w-full bg-transparent checked:bg-accent checked:border-accent' />
@@ -218,7 +254,11 @@ export default function Payment1() {
                                         <Image src={iconCc} alt='icon-cc' />
                                     </div>
                                 )}
+<<<<<<< HEAD
                                 {user && (
+=======
+                                {account && (
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                                     <div className='flex mt-12'>
                                         <div className='border-2 rounded-full mt-2 h-4 w-4 border-accent flex items-center justify-center'>
                                             <input type='radio' defaultChecked id='radio-metamask' onClick={onClickMatic} name='method' className='cursor-pointer appearance-none h-2 w-2 rounded-full h-full w-full bg-transparent checked:bg-accent checked:border-accent' />

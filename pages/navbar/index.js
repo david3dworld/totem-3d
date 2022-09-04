@@ -14,7 +14,11 @@ import AccountModal from './AccountModal'
 import defaultProfilePicture from "../images/../../images/Bg.png"
 
 export default function NavBar() {
+<<<<<<< HEAD
   const { isInitialized, isAuthenticated, authenticate, logout: moralisLogout, account, Moralis, user, refetchUserData } = useMoralis();
+=======
+  const { isAuthenticated, authenticate, logout: moralisLogout, account, Moralis, user } = useMoralis();
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
   const [isAccountSectionVisible, setAccountSectionVisiblity] = useState(false)
   const onToggleAccount = () => setAccountSectionVisiblity(state => !state)
   const router = useRouter();
@@ -48,10 +52,18 @@ export default function NavBar() {
   const [result, setResult] = useState("");
   const [profileInfo, setProfileInfo] = useState()
   useEffect(() => {
+<<<<<<< HEAD
     const closeDropdown = e => {
       setAccountSectionVisiblity(false)
     }
     document.body.addEventListener('click', closeDropdown)
+=======
+    const closeDropdown = e =>{
+      setAccountSectionVisiblity(false)
+    }
+    document.body.addEventListener('click', closeDropdown)
+
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
     const fetchUserData = async () => {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/myProfile`, {
         headers: {
@@ -161,6 +173,7 @@ export default function NavBar() {
 
               <div className="lg:ml-3 relative">
                 <div className='flex items-center'>
+<<<<<<< HEAD
                   {(token || (user && user.get('accounts') && user.get('accounts')[0])) &&
                     <div onClick={() => {
                       onToggleAccount()
@@ -169,6 +182,16 @@ export default function NavBar() {
                       </p></div>
                   }
                   {(!token && !user) &&
+=======
+                  {(token || account) &&
+                    <div onClick={() => {
+                      onToggleAccount()
+                    }} className='cursor-pointer hover:opacity-80 hidden lg:block mr-3 '> <p className=''>
+                        {account ? check() : emailOrWallet}
+                      </p></div>
+                  }
+                  {(!token && !account) &&
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                     <div onClick={function () {
                       router.push("/login1");
                     }} className='  hover:opacity-80 cursor-pointer hidden lg:block  mr-3 '>
@@ -179,7 +202,11 @@ export default function NavBar() {
                     <span className="sr-only">Open user menu</span>
                     <div onClick={(e) => {
                       e.stopPropagation()
+<<<<<<< HEAD
                       if (!profileInfo && !user) {
+=======
+                      if (!profileInfo && !account) {
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                         router.push("/login1");
                         return;
                       }
@@ -246,7 +273,12 @@ export default function NavBar() {
             }
           </div>
         </div>
+<<<<<<< HEAD
       </nav >
     </div >
+=======
+      </nav>
+    </div>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
   )
 }

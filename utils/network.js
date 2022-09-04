@@ -1,7 +1,11 @@
 import { toast } from 'react-toastify'
 
 // export const network = process.env.ETH_USED_NETWORK || 'rinkeby'
+<<<<<<< HEAD
 export const network = process.env.NEXT_PUBLIC_network
+=======
+export const network = 'mumbai'
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
 
 export const networkIdMapper = {
   mainnet: 1,

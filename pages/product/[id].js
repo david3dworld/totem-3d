@@ -31,7 +31,11 @@ export default function product() {
   const [product, setProduct] = useState({});
   const [category, setCategory] = useState({});
   const [filters, setFilters] = useState([]);
+<<<<<<< HEAD
   const { Moralis, account, user } = useMoralis();
+=======
+  const { Moralis, account } = useMoralis();
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
   const [totalMaxCap, setTotalMaxCap] = useState(0);
   const [totalRemaining, setTotalRemaining] = useState(0);
   const router = useRouter()
@@ -121,7 +125,11 @@ export default function product() {
   };
   const onPressBuyNow = () => {
 
+<<<<<<< HEAD
     if (!token && !user) {
+=======
+    if (!token && !account) {
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
       router.push(`/login1?returnUrl=/payment/${router.query.id}`)
     } else {
       router.push(`/payment/${router.query.id}`)
@@ -152,7 +160,11 @@ export default function product() {
             <div style={{ border: '2px solid #2E357B' }} className='lg:h-10 w-4/5 lg:w-0 h-1 m-2'>
             </div>
             <div className='mr-4'>
+<<<<<<< HEAD
               <p className='text-2xl'>{totalRemaining}/{totalMaxCap} minted</p>
+=======
+              <p className='text-2xl'>{totalRemaining}/{totalMaxCap} remaining</p>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
             </div>
             <div style={{ border: '2px solid #2E357B' }} className='lg:h-10 w-4/5 lg:w-0 h-1 m-2'>
             </div>
@@ -172,6 +184,7 @@ export default function product() {
             </div>
           </div>
         </div>
+<<<<<<< HEAD
         <div className='mt-16 flex lg:flex-row flex-col px-5 lg:px-0'>
           <div className='relative lg:w-4/12 overflow-hidden' style={{ background: 'white', height: "525px", borderRadius: '20px' }}>
             {!product?.image3D && product?.imageUrl && <Image width={393} height={525} src={product.is_comming_soon && product.comming_soon_image_url ? product.comming_soon_image_url : product?.imageUrl}></Image>}
@@ -191,6 +204,34 @@ export default function product() {
               showLoadedPecent={true}
               loadingBackgroundUrl={product.imageUrl ? product.imageUrl : ''}
             />}
+=======
+
+<<<<<<< HEAD
+        <div className='mt-16 flex lg:flex-row flex-col px-5 lg:px-0'>
+          <div className='relative lg:w-4/12' style={{ background: 'white', height: "525px", borderRadius: '20px' }}>
+            {!product?.image3D && product?.imageUrl && <Image width={393} height={525} src={product?.imageUrl}></Image>}
+            {product?.image3D && <SingleModelView 
+=======
+        <div className='mt-16 flex lg:flex-row flex-col'>
+          <div className='relative lg:w-4/12' style={{ background: 'white', height: "525px", width: "393px", borderRadius: '20px' }}>
+          {Object.keys(product).length != 0 && <SingleModelView 
+>>>>>>> origin
+                modelUrl={product.image3D ? product.image3D : null} 
+                radius='20px'
+                key={product._id}
+                allowChangeBackground={false}
+                zoom={0}
+                isFitZoom={true}
+                padding={{
+                  paddingTop: 0.2,
+                  paddingLeft: 0.2,
+                  paddingBottom: 0.2,
+                  paddingRight: 0.2
+                }}
+                showLoadedPecent = {true}
+                loadingBackgroundUrl = {product.imageUrl ? product.imageUrl : ''}
+              />}
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
           </div>
           <div className='lg:w-8/12 flex justify-center'>
             <div style={{ borderRadius: '20px', background: "#161A42 0% 0% no-repeat padding-box" }} className='w-full mt-5 lg:mt-0 py-5 px-5 lg:px-9 flex lg:flex-row flex-col'>
@@ -205,11 +246,19 @@ export default function product() {
                     <p className='relative bottom-1 text-lg' style={{ color: "#0EA8D6", fontFamily: "Poppins" }}>{product.series}</p>
                   </div>
                   <div className='text-md lg:ml-8'>
+<<<<<<< HEAD
                     <p className='text-white text-base'>Scarcity</p>
                     <p style={{ fontFamily: "Poppins" }} className='relative bottom-1 text-white text-lg'>{product.scaracity}</p>
                   </div>
                 </div>
                 <div className='flex-col h-full hidden lg:flex '>
+=======
+                    <p className='text-white text-base'>Scarity</p>
+                    <p style={{ fontFamily: "Poppins" }} className='relative bottom-1 text-white text-lg'>{product.scaracity}</p>
+                  </div>
+                </div>
+                <div className='hidden lg:block'>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                   <div className='mt-3 text-white lg:p-0'>
                     <p className='text-sm lg:pr-12 ' style={{ fontFamily: "Poppins" }}>{product.description}</p>
                   </div>
@@ -225,9 +274,15 @@ export default function product() {
                   </div>
 
                   {product.mintedCount < product.maxCap && <a style={{ color: '#161A42', background: "#0EA8D6", borderRadius: '10px', width: "161px", height: "40px" }}
+<<<<<<< HEAD
                     onClick={product.is_comming_soon ? undefined : onPressBuyNow}
                     className='font-bold text-xl flex justify-center items-center mt-5 cursor-pointer'>
                     {product.is_comming_soon ? 'COMING SOON' : 'COLLECT NOW'}
+=======
+                    onClick={() => onPressBuyNow()}
+                    className='font-bold text-xl flex justify-center items-center mt-5 cursor-pointer'>
+                    COLLECT NOW
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                   </a>}
                   {product.mintedCount >= product.maxCap && (<a style={{ background: "rgb(203 203 203)", borderRadius: '10px', width: "161px", height: "40px" }}
                     className='font-bold text-xl flex justify-center items-center mt-5 text-red-600'>
@@ -240,7 +295,11 @@ export default function product() {
               <div className='mt-5 lg:mt-0 flex flex-col items-start h-full justify-between'>
                 <div>
                   <div className='text-md flex flex-col items-start'>
+<<<<<<< HEAD
                     <p className='text-white text-base'>Minted</p>
+=======
+                    <p className='text-white text-base'>Remain</p>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                     <p className='relative text-lg' style={{ color: "#0EA8D6", fontFamily: "Poppins" }}>{product.mintedCount}/{product.maxCap}</p>
                   </div>
                   <div className='text-md mt-4 flex flex-col items-start'>
@@ -283,9 +342,15 @@ export default function product() {
                 </div>
 
                 {product.mintedCount < product.maxCap && <a style={{ color: '#161A42', background: "#0EA8D6", borderRadius: '10px', width: "161px", height: "40px" }}
+<<<<<<< HEAD
                   onClick={product.is_comming_soon ? undefined : onPressBuyNow}
                   className='font-bold text-xl flex justify-center items-center mx-auto mt-5 cursor-pointer'>
                   {product.is_comming_soon ? 'COMING SOON' : 'COLLECT NOW'}
+=======
+                  onClick={() => onPressBuyNow()}
+                  className='font-bold text-xl flex justify-center items-center mx-auto mt-5 cursor-pointer'>
+                  COLLECT NOW
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                 </a>}
                 {product.mintedCount >= product.maxCap && (<a style={{ background: "rgb(203 203 203)", borderRadius: '10px', width: "161px", height: "40px" }}
                   className='font-bold text-xl flex justify-center items-center mx-auto mt-5 text-red-600'>
@@ -321,14 +386,20 @@ export default function product() {
                 maxCap,
                 mintedCount,
                 _id,
+<<<<<<< HEAD
                 is_comming_soon,
                 comming_soon_image_url
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
               } = data
               return (
                 <div className='lg:w-1/5 w-1/2 mb-5 px-2' key={index}>
                   <ProductItem
+<<<<<<< HEAD
                     isComingSoon={is_comming_soon}
                     comingSoonImageUrl={comming_soon_image_url}
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                     key={index}
                     imageUrl={imageUrl}
                     name={name}

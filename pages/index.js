@@ -134,6 +134,10 @@ export default function Home() {
         'Content-Type': 'application/json'
       }
     }).then(function (data) {
+<<<<<<< HEAD
+=======
+      console.log('data', data);
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
       setLoadingProduct(false);
       const products = data.data.result
       if (window.innerWidth <= 768) {
@@ -287,7 +291,11 @@ export default function Home() {
               0 Brands
             </div>}
           </div>
+<<<<<<< HEAD
           <div className='mt-5 px-2 flex flex-wrap space-y-2 lg:space-y-0'>
+=======
+          <div className='mt-5 px-2 flex flex-wrap'>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
             {collections?.map(function (data, index) {
               return (
                 <div key={index} className='w-full w-1/2 lg:w-52 px-2'>
@@ -347,14 +355,20 @@ export default function Home() {
                 maxCap,
                 mintedCount,
                 _id,
+<<<<<<< HEAD
                 is_comming_soon,
                 comming_soon_image_url
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
               } = data
               return (
                 <div className='lg:w-1/5 w-1/2 mb-5 px-2' key={index}>
                   <ProductItem
+<<<<<<< HEAD
                     isComingSoon={is_comming_soon}
                     comingSoonImageUrl={comming_soon_image_url}
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                     imageUrl={imageUrl}
                     name={name}
                     thematics={thematics}

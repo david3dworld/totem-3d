@@ -16,16 +16,25 @@ import GoogleLogin from 'react-google-login';
 import Link from 'next/link';
 import RegisterAlmostDone from '../components/RegisterAlmostDone'
 
+<<<<<<< HEAD
 export default function Login() {
     const { signup, login, isAuthenticated, isloggedin: moralisLoggedIn, account, authenticate, Moralis } = useMoralis();
     const [email, setEmail] = useState();
     const [isVerifyingEmail, setVerifyingEmail]= useState(false)
+=======
+export default function login1() {
+    const { signup, login, isAuthenticated, isloggedin: moralisLoggedIn, account, authenticate, Moralis } = useMoralis();
+    const [email, setEmail] = useState();
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
     const [password, setPassword] = useState();
     const [cPassword, setCPassword] = useState('');
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [cPasswordClass, setCPasswordClass] = useState('form-control');
     const [isCPasswordDirty, setIsCPasswordDirty] = useState(false);
+<<<<<<< HEAD
     const [isEmailVerifying, setEmailVerifying] = useState(false)
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
     const dispatch = useDispatch();
     const [emailError, setEmailError] = useState('')
     const isloggedin = useSelector(function (state) {
@@ -113,7 +122,11 @@ export default function Login() {
             }
         })
     }
+<<<<<<< HEAD
     const registerUser = async () => {
+=======
+    const registerUser = () => {
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
         if (!email || !password) {
             toast.error("email or password needs to be filled");
         }
@@ -122,6 +135,7 @@ export default function Login() {
         }
         else {
             if (validator.isEmail(email)) {
+<<<<<<< HEAD
                 try {
                     const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/email/register`, {
                         email: email,
@@ -143,6 +157,30 @@ export default function Login() {
                     console.log('ERROR', e.message)
                     toast.error("Error");
                 }
+=======
+                axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/email/register`, {
+                    email: email,
+                    password: password
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function (data) {
+                    console.log(data);
+                    if (data.data.success) {
+                        toast.success("Registered");
+                        loginUser()
+                        setTimeout(() => {
+                            router.push("/");
+                        }, 1000);
+                    } else {
+                        toast.error("Error");
+                    }
+                }).catch(function (error) {
+                    console.log('ERROR', error.message)
+                    toast.error("Error");
+                })
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
             } else {
                 toast.error('Enter valid Email!');
             }
@@ -159,9 +197,14 @@ export default function Login() {
                 <Navbar></Navbar>
 
                 <div className='mt-20 flex justify-center items-center'>
+<<<<<<< HEAD
                 <ToastContainer />
                     {!isVerifyingEmail ? (
                         <div style={{ borderRadius: '26px' }} className='bg-white px-12 py-3 relative max-w-xl w-full'>
+=======
+                    <ToastContainer />
+                    <div style={{ borderRadius: '26px' }} className='bg-white px-12 py-3 relative max-w-xl w-full'>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                         <p className='text-lg font-semibold' style={{ color: "#161A42", fontFamily: "Chakra Petch" }}>LOG IN</p>
                         <div className='flex flex-col lg:flex-row items-center'>
                             <form className='lg:w-1/2 lg:pr-5'>
@@ -187,6 +230,7 @@ export default function Login() {
 
                             <div className='lg:w-1/2 lg:border-l' style={{ borderColor: 'rgb(213 215 229)' }}>
                                 <div className='flex flex-col items-center'>
+<<<<<<< HEAD
                                     {/* for desktop */}
                                     <div onClick={function () {
                                         authenticate();
@@ -199,6 +243,13 @@ export default function Login() {
                                     className='lg:hidden cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4'>
                                         <p>Or connect your wallet</p>
                                     </a>
+=======
+                                    <div onClick={function () {
+                                        authenticate();
+                                    }} style={{ borderRadius: '100px', background: "#161A42" }} className='cursor-pointer hover:opacity-80 text-white mt-4 py-1 px-4'>
+                                        <p>Or connect your wallet</p>
+                                    </div>
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                                     <div className='mt-4 cursor-pointer' onClick={authenticate}>
                                         <Image width={91} height={91} src={fox}></Image>
                                     </div>
@@ -265,7 +316,10 @@ export default function Login() {
                             <CloseIcon fontSize='large' />
                         </div>
                     </div>
+<<<<<<< HEAD
                     ): <RegisterAlmostDone />}
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                 </div>
 
                 <div className='h-40'>

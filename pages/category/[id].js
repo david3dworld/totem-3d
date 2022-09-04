@@ -123,6 +123,7 @@ export default function Categories() {
                       <p style={{ color: "#696C71", fontFamily: "Poppins" }}>I authorize TOTEM DIGITAL to notify me when a selection of figurines will be available for this thematic</p>
                     </div>
                   </div>
+<<<<<<< HEAD
                 </div>
                 {!isLoading ? (
                   <button
@@ -205,7 +206,85 @@ export default function Categories() {
                     mintedCount={mintedCount}
                     id={_id}
                   />
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                 </div>
+                {!isLoading ? (
+                  <button
+                    disabled={!toggleAccepted}
+                    type="submit"
+                    style={{ width: "161px", height: "40px", background: "#0EA8D6", color: "#161A42", borderRadius: '10px' }}
+                    className=" hover:opacity-80 cursor-pointer mt-8 flex justify-center items-center mb-5"
+                  >
+                    <p className=' text-lg font-bold'>SEND</p>
+                  </button>
+                ) : (
+                  <div className='mt-8 mb-4'>
+                    <CircularProgress color='success' />
+                  </div>
+                )}
+              </form>
+            </div>
+            <div className='mt-20 text-white'>
+              <p style={{ font: "normal normal Chakra Petch" }} className='text-4xl'>Other Thematics</p>
+            </div>
+            <div className='flex items-center lg:grid lg:grid-cols-6 gap-5 mt-8 flex-col lg:flex-row'>
+              {thematics.map(function (data, index) {
+                return (
+                  <div key={index} style={{ width: "162px", height: "335px", background: "#161A42", color: "#E0E3FF" }} className='flex flex-col'>
+                    <div className='m-2'>
+                      <img src={data.imageUrl}/>
+                    </div>
+                    <div className='flex justify-center'>
+                      <div style={{ background: "#161A42", border: "2px solid #2E357B", width: "34px", height: "34px" }} className='relative flex justify-center items-center rounded-full bottom-7'>
+                        <img src={data.iconUrl}/>
+                      </div>
+                    </div>
+                    <div className='relative bottom-7'>
+                      <div className=''>
+                        <p className=' text-2xl text-center'>{data.name}</p>
+                      </div>
+                      <div style={{ border: '1px solid #2E357B' }} className='mt-3 mb-3'>
+                      </div>
+                      <div className='cursor-pointer text-center flex justify-center items-center text-md w-full'>
+                        <Link href={'/category/' + (data.name).toLowerCase()}><a>DISCOVER THE COLLECTIONS</a></Link>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>}
+          <div className='flex flex-col items-center lg:grid grid-cols-5 mt-5 gap-x-5 gap-y-12'>
+            {lastDrop.map(function (data, index) {
+              const {
+                imageUrl,
+                name,
+                thematics,
+                scaracity,
+                series,
+                priceUsd,
+                priceMatic,
+                productNo,
+                maxCap,
+                mintedCount,
+                _id,
+              } = data
+              return (
+                <ProductItem
+                  key={index}
+                  imageUrl={imageUrl}
+                  name={name}
+                  thematics={thematics}
+                  scarcity={scaracity}
+                  series={series}
+                  priceUsd={priceUsd}
+                  priceMatic={priceMatic}
+                  productNo={productNo}
+                  maxCap={maxCap}
+                  mintedCount={mintedCount}
+                  id={_id}
+                />
               )
             })}
           </div>

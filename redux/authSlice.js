@@ -47,7 +47,10 @@ export const authSlice = createSlice({
             localStorage.removeItem('access_token')
             state.token = null;
             state.emailOrWallet = null;
+<<<<<<< HEAD
             state.isloggedin = false;
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
         },
         authToken(state, actions) {
             state.token = actions.payload;

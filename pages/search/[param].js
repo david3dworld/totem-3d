@@ -68,11 +68,17 @@ export default function Home() {
         <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 px-2 lg:px-8 flex w-full flex-wrap justify-around'>
           {lastDrop2?.map(function (data, index) {
             return (
+<<<<<<< HEAD
               <div className='lg:w-1/5 w-1/2 mb-5 px-2' key={index}>
                 <ProductItem
                 isComingSoon={data.is_comming_soon}
                 comingSoonImageUrl={data.comming_soon_image_url}
                 id={data._id}
+=======
+              <ProductItem
+                id={data._id}
+                key={index}
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
                 imageUrl={data.imageUrl}
                 thematics={data.thematics}
                 name={data.name}
@@ -84,7 +90,10 @@ export default function Home() {
                 priceMatic={data.priceMatic}
                 series={data.series}
               />
+<<<<<<< HEAD
               </div>
+=======
+>>>>>>> 3c83c2462043cc83fe6088eefcd360dfecdc6464
             )
           })}
         </div>
