@@ -3,18 +3,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Navbar from "../navbar/index"
 import Footer from '../footer'
-import polygon from "../../images/polygon-matic-logo.png"
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import music from "../../images/Icon awesome-music.svg"
-import movies from "../../images/Icon material-local-movies.svg"
-import games from "../../images/Icon metro-gamepad.svg"
-import sports from "../../images/Icon awesome-football-ball.svg"
-import comics from "../../images/Icon awesome-book-open.svg"
-import art from "../../images/Icon map-art-gallery.svg"
+import ProductItem from '../../components/ProductItem'
+
 export default function Home() {
   const router = useRouter();
   const [lastDrop2, setLastDrop2] = useState([])
@@ -28,7 +23,7 @@ export default function Home() {
     setLoadingBrand(true)
     setLastDrop2([])
     setBrands([])
-    axios.get(`https://shop.totem-universe.io/product?q=${router.query.param}`, {
+    axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product?q=${router.query.param}`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -39,7 +34,7 @@ export default function Home() {
     }).catch(function (error) {
       console.log(error.request);
     })
-    axios.get(`https://shop.totem-universe.io/brand?q=${router.query.param}`, {
+    axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/brand?q=${router.query.param}`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -60,7 +55,7 @@ export default function Home() {
         <Navbar></Navbar>
 
         <div className='mt-10 text-white'>
-          <p style={{ fontFamily: "Chakra Petch" }} className='text-3xl '>Product results for {router.query.param}</p>
+          <p style={{ fontFamily: "Chakra Petch" }} className='text-3xl ml-4'>Product results for {router.query.param}</p>
         </div>
         {!loadingProduct && lastDrop2.length == 0 && <h1 className='text-center text-2xl py-10'>No result found</h1>}
         <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center lg:flex-row flex-col'>
@@ -70,64 +65,31 @@ export default function Home() {
             </div>
           }
         </div>
-        <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center lg:flex-row flex-col lg:grid grid-cols-5 gap-5'>
+        <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 px-2 lg:px-8 flex w-full flex-wrap justify-around'>
           {lastDrop2?.map(function (data, index) {
             return (
-              <Link href={`/product/${data._id}`} key={index}>
-                <a>
-                  <div style={{ width: "194px", background: "#161A42" }} className=''>
-                    <div style={{ borderRadius: '8px' }} className=' bg-white m-2 relative'>
-                      <div className='relative top-2 left-2'>
-                        {/* <Image height={20} width={60} src={data.title}></Image> */}
-                      </div>
-                      <div style={{ borderRadius: '8px' }} className=' flex justify-center items-center'>
-
-                        <div className='w-full h-48 relative'>
-                          <Image src={data.imageUrl}
-                            width="95%" height="95%" layout="responsive" objectFit="contain"
-                          ></Image>
-                        </div>
-                      </div>
-                      <div className='category'>
-                        {data.category == 'music' && <Image className='music' src={music} />}
-                        {data.category == 'movies' && <Image className='movies' src={movies} />}
-                        {data.category == 'games' && <Image className='games' src={games} />}
-                        {data.category == 'sports' && <Image className='sports' src={sports} />}
-                        {data.category == 'comics' && <Image className='comics' src={comics} />}
-                        {data.category == 'art' && <Image className='art' src={art} />}
-                      </div>
-                    </div>
-                    <div className='p-3'>
-                      <p className='text-lg text-white'>{data.name}</p>
-
-                      <div className='relative flex items-center mt-3'>
-
-                        <p className='absolute right-0 text-white'>Serie 1</p>
-                      </div>
-
-                      <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
-                      </div>
-                      <div style={{ fontFamily: "Poppins" }} className='flex items-center relative mt-4'>
-                        <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
-                        <p style={{ color: "#0EA8D6" }} className='ml-1 text-lg '>{data.priceMatic}</p>
-                        <Image src={polygon}></Image>
-                        <p className='absolute right-0'>{data?.productNo}/{data?.maxCap}</p>
-                      </div>
-
-                      <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
-                      </div>
-                      <div className='flex items-center justify-center mt-2'>
-                        <p style={{ fontFamily: "Chakra Petch" }} className='text-white'>COLLECT</p>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              </Link>
+              <div className='lg:w-1/5 w-1/2 mb-5 px-2' key={index}>
+                <ProductItem
+                isComingSoon={data.is_comming_soon}
+                comingSoonImageUrl={data.comming_soon_image_url}
+                id={data._id}
+                imageUrl={data.imageUrl}
+                thematics={data.thematics}
+                name={data.name}
+                productNo={data.productNo}
+                maxCap={data.maxCap}
+                mintedCount={data.mintedCount}
+                scarcity={data.scaracity}
+                priceUsd={data.priceUsd}
+                priceMatic={data.priceMatic}
+                series={data.series}
+              />
+              </div>
             )
           })}
         </div>
         <div className='mt-20 text-white'>
-          <p style={{ fontFamily: "Chakra Petch" }} className='text-3xl '>Brand results for {router.query.param}</p>
+          <p style={{ fontFamily: "Chakra Petch" }} className='text-3xl ml-3'>Brand results for {router.query.param}</p>
         </div>
         {!loadingBrand && brands.length == 0 && <h1 className='text-center text-2xl py-10'>No result found</h1>}
         <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center lg:flex-row flex-col'>
@@ -137,30 +99,33 @@ export default function Home() {
             </div>
           }
         </div>
-        <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 flex items-center lg:flex-row flex-col lg:grid grid-cols-5 gap-5'>
+        <div style={{ fontFamily: "Chakra Petch" }} className='mt-5 px-2 lg:px-8 flex w-full flex-wrap '>
 
           {brands?.map(function (data, index) {
             return (
-              <Link href={`/collection/${data._id}`} key={index}>
+              <div className='lg:w-1/5 w-1/2 mb-5 px-2' key={index}>
+                <Link href={`/collection/${data._id}`}>
                 <a>
-                  <div key={index} onClick={function () { router.push(`/collection/${data._id}`); }} style={{ width: "194px", height: "261px", background: "#161A42" }} className='mt-5 flex items-start justify-start flex-col cursor-pointer'>
-                    <div className='w-full flex flex-col justify-center items-end h-5/6 relative'>
-                      <div className='w-full h-full mt-28'>
-                        {checkURLisValid(data.logoUrl) && <div className='w-full h-48 relative'>
-                          <Image src={data.logoUrl}
-                            width="95%" height="95%" layout="responsive" objectFit="contain"
-                          ></Image>
-                        </div>}
-                      </div>
-                      <div className='absolute w-full'>
-                        {checkURLisValid(data.imageUrl) && <div className='w-full h-48 relative'>
-                          <img src={data.imageUrl} className="w-full" />
-                        </div>}
-                      </div>
+                  <div key={index} onClick={function () { router.push(`/collection/${data._id}`); }} className='bg-jeep w-[200px] pb-8 rounded-xl overflow-hidden mt-5 px-2 flex items-start flex-col cursor-pointer'>
+                    <div className='w-full h-full'>
+                      {checkURLisValid(data.logoUrl) && <div className='h-16 flex justify-center'>
+                        <Image
+                          alt={data.name}
+                          src={data.logoUrl}
+                          width="95%"
+                          height="95%"
+                          objectFit="contain" />
+                      </div>}
+                    </div>
+                    <div className='w-full'>
+                      {checkURLisValid(data.imageUrl) && <div className='w-full h-48'>
+                        <img src={data.imageUrl} className="w-full" />
+                      </div>}
                     </div>
                   </div>
                 </a>
               </Link>
+              </div>
             )
           })}
         </div>

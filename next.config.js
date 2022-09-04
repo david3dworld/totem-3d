@@ -7,7 +7,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['shop.totem-universe.io'],
+    domains: ['shop.totem-universe.io', 'backend.totem-universe.io'],
   },
   env: {
     EMAIL_JS_SERVER: process.env.EMAIL_JS_SERVER,

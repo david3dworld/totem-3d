@@ -160,7 +160,7 @@ export default function Spinach() {
                 <p className='relative bottom-1' style={{ color : "#0EA8D6",fontFamily:"Poppins" }}>Serie 1</p>
                 </div>
                 <div className='text-md ml-10'>
-                <p className='text-white'>Scarity</p>
+                <p className='text-white'>Scarcity</p>
                 <p style={{fontFamily:"Poppins" }} className='relative bottom-1 text-white'>RARE</p>
                 </div>
                 <div className='text-md ml-10'>

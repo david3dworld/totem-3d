@@ -1,8 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
+import { useMoralis } from 'react-moralis'
+import { useRouter } from 'next/router'
 
 const AccountSection = (props) => {
-  const { isVisible, onLogout } = props
+  const { isVisible, onLogout } = props;
+  const { account, user } = useMoralis()
+  const router  = useRouter()
   if(!isVisible) return null
   const onPressLogout = (e) => {
     e.preventDefault()
@@ -15,11 +19,13 @@ const AccountSection = (props) => {
           My dashboard
         </div>
       </Link>
-      <Link href='/profile'>
-        <div className='py-2 cursor-pointer'>
-          My profile
-        </div>
-      </Link>
+      {!user && (
+        <Link href='/profile'>
+          <div className='py-2 cursor-pointer'>
+            My profile
+          </div>
+        </Link>
+      )}
       <button className='py-2 cursor-pointer text-start' onClick={onPressLogout}>Logout</button>
     </div>
   )

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/inline-script-id */
 import '../styles/globals.css'
 import { Provider } from "react-redux";
 import {NotificationContainer, NotificationManager} from 'react-notifications';
@@ -12,8 +13,8 @@ import 'react-notifications/lib/notifications.css';
 function MyApp({ Component, pageProps }) {
   // const url = "https://tu967vbmhkyy.usemoralis.com:2053/server";
   // const appId = "51REoBzqidhjgorRploUJedavk8OjB3YLgjvTBnF";
-  const url = "https://3plrziv1chui.usemoralis.com:2053/server";
-  const appId = "fF0AqfcxeUp6VHjqCQ81DOzewPchpGJjxawYmhWM";
+  const url = process.env.NEXT_PUBLIC_Moralis_URL;
+  const appId = process.env.NEXT_PUBLIC_Moralis_App_ID;
 
   return (
   <>

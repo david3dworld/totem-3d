@@ -17,7 +17,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding, AnimationMixer } from "three";
+import { Box3, BufferGeometry, Color, Group, sRGBEncoding, TextureLoader, Vector3, Texture, LoadingManager, TextureEncoding, AnimationMixer, DoubleSide, BackSide, FrontSide } from "three";
 import Image from 'next/image'
 import ResetIcon from '../../../images/stop-359-1180646.png'
 import RotateIcon from '../../../images/rotate-icon-5-removebg-preview.png'
@@ -39,7 +39,7 @@ const ControlGroup = ({group, isRotate}) => {
     useFrame(() => {
         if(isRotate) {
             if(group){
-                group.rotation.y -= Math.PI/300
+                group.rotation.y += Math.PI/300
             }
         }
     })
@@ -179,20 +179,22 @@ const SingleModelView = ({
 
                 data.scene.traverse((o) => {
                     if (o.isMesh) {
-                        o.material.roughness = 1.4
+                        o.material.roughness = 0.8
                         o.material.transparent = true;
                         o.material.opacity = 0.1;
                         o.material.flatShading = false;
                         o.material.envMapIntensity = 0.1
                         o.position.set(0,o.position.y,0)
-                        if (o.name.toLowerCase().includes('pod') || o.name.toLowerCase().includes('ground')) {
-                            o.receiveShadow = true;
-                        }
-                        else {
-                            o.castShadow = true;
-                        }
+                        o.material.metalness = 0.8
+                        
+                        o.receiveShadow = true;
+                        o.castShadow = true;
+
+                        o.material.shadowSide = BackSide
                     }
                 });
+                // data.scene.receiveShadow = true;
+                // data.scene.castShadow = true;
                 data.scene.userData = { ...data.scene.userData, name: url }
                 resolve(data.scene)
             }, (e) => {
@@ -307,7 +309,9 @@ const SingleModelView = ({
             paddingRight: padding.paddingRight * modelWidth
         }
 
-        controls.fitToBox(box, false, fitPadding);
+        if(controls){
+            controls.fitToBox(box, false, fitPadding);
+        }
         const minZoom = 93.52 / modelWidth
         controls.minZoom = minZoom
 
@@ -386,13 +390,13 @@ const SingleModelView = ({
                 {
                     isHasBackground && <color attach="background" args={["white"]} />
                 }
-                <hemisphereLight
-                    intensity={0.15}
+                {/* <hemisphereLight
+                    intensity={0.1}
                     angle={0.1}
                     penumbra={1}
                     position={[10, 15, 10]}
-                />
-                <directionalLight intensity={0.6} position={[0.6, 1, 1.2]} castShadow={true}/>
+                /> */}
+                <directionalLight intensity={0.8} position={[4.2, 9, 5.8]} castShadow={true}/>
                 <Background base64={backgroundBase64} />
                 {modelUrl != null && itemGroup && (
                     <ModelGroup

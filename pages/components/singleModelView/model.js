@@ -55,10 +55,28 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
       }
 
     useEffect(() => {
-        loadMusic().then(rs => {
-            setMusic(rs);
-        })
-    }, [])
+
+        if(!itemGroup || !itemGroup.userData.name) return
+
+        if(itemGroup.userData.name.includes(`PopeyeSpinash_AnimationWeb_1661160655674`)) {
+            loadMusic('/POPEYE_PREMIUM_AUDIO.mp3').then(rs => {
+                setMusic(rs);
+            })
+        }
+        else if(itemGroup.userData.name.includes(`Strormtrooper_AnimationWeb_1661158885806`)) {
+            loadMusic('/SOUND_STORM_ANIMATION.mp3').then(rs => {
+                setMusic(rs);
+            })
+        }
+    }, [itemGroup])
+
+    useEffect(() => {
+        return () => {
+            if(music && music.isPlaying) {
+                music.stop()
+            }
+        }
+    }, [music])
 
     const onPlayAnimation = () => {
         if (mixer && animations.length > 0) {
@@ -73,23 +91,23 @@ const ModelGroup = forwardRef(({ groupRef, itemGroup, animations }, ref) => {
     const onResetAnimation = () => {
         if (mixer && animations.length > 0) {
             mixer.clipAction(animations[0]).stop();
-            if(music) {
+            if(music && music.isPlaying) {
                 music.stop();
             }
             setIsPlaying(false);
         }
     };
 
-    const loadMusic = () => {
+    const loadMusic = (url = '/SOUND_STORM_ANIMATION.mp3') => {
         return new Promise(resolve => {
             const listener = new AudioListener()
             const music = new Audio(listener)
             const loader = new AudioLoader()
 
-            loader.load('/SOUND_STORM_ANIMATION.mp3', buffer => {
+            loader.load(url, buffer => {
                 music.setBuffer(buffer)
                 music.setLoop(true)
-                music.setVolume(0.1)
+                music.setVolume(1)
 
                 // const analyser = new AudioAnalyser(music, 128)
                 // music.play()

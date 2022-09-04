@@ -161,7 +161,7 @@ export default function PopeyePremium() {
                 <p className='relative bottom-1' style={{ color : "#0EA8D6",fontFamily:"Poppins" }}>Serie 1</p>
                 </div>
                 <div className='text-md ml-10'>
-                <p className='text-white'>Scarity</p>
+                <p className='text-white'>Scarcity</p>
                 <p style={{fontFamily:"Poppins" }} className='relative bottom-1 text-white'>RARE</p>
                 </div>
                 <div className='text-md ml-10'>
@@ -261,7 +261,8 @@ export default function PopeyePremium() {
                       <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
                       </div>
                       <div className='flex items-center justify-center mt-2'>
-                      <p className='text-white cursor-pointer'>COLLECT</p>
+                        {data && data.mintedCount < data.maxCap && <p className='text-white cursor-pointer'>COLLECT</p>} 
+                        {data && data.mintedCount >= data.maxCap && <p className='text-white cursor-pointer'>SOLD OUT</p>} 
                       </div>
                     </div>
                   </div>

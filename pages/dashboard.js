@@ -11,8 +11,9 @@ import discordIcon from '../images/discord-icon.svg'
 import { useRouter } from 'next/router'
 import polygon1 from "../images/polygon-matic-logo.png"
 import styled from 'styled-components'
-import { getPurchasedProducts, getProductsByCollectionIds } from '../api/product'
+import { getPurchasedProducts, getProducts, getProductsByCollectionIds } from '../api/product'
 import { getBrands } from '../api/brand'
+import { getProfile } from '../api/user'
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
@@ -22,6 +23,21 @@ import SingleModelView from './components/singleModelView/index'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import Link from 'next/link';
+import CONTRACT_ADDRESS from '../contracts/address'
+import music from "../images/Icon awesome-music.svg"
+import movies from "../images/Icon material-local-movies.svg"
+import games from "../images/Icon metro-gamepad.svg"
+import sport from "../images/Icon awesome-football-ball.svg"
+import comics from "../images/Icon awesome-book-open.svg"
+import art from "../images/Icon map-art-gallery.svg"
+const categoryIcon = {
+  music,
+  movies,
+  games,
+  sport,
+  comics,
+  art
+}
 const customStyles = {
   content: {
     top: '50%',
@@ -33,9 +49,10 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
   },
 };
-const CONTRACT_ADDRESS = "0x5629b4d18c0B93377F5f28e544929a42ec004724"
-export default function dashboard() {
-  const { authenticate, isAuthenticated, isInitialized, account, chainId, Moralis, logout } = useMoralis();
+
+export default function Dashboard() {
+
+  const { authenticate, isAuthenticated, isInitialized, account, chainId, Moralis, user, logout } = useMoralis();
   const Web3Api = useMoralisWeb3Api();
   const [nfts, setNfts] = useState([])
   const [toAddress, setToAddress] = useState("")
@@ -45,7 +62,8 @@ export default function dashboard() {
   const [showTransferModal, setShowTransferModal] = useState(false)
   const [selectedNft, setSelectedNft] = useState(null)
   const [brands, setBrands] = useState([])
-  const [selectedBrandIndex, setSelectedBrandIndex] = useState(0)
+  const [selectedBrandIndex, setSelectedBrandIndex] = useState(-1)
+  const [shouldShowAll, setShouldShowAll] = useState(true)
   const [trandBrandId, setTrandBrandId] = useState("")
   const [loading, setLoading] = useState(true)
 
@@ -53,7 +71,12 @@ export default function dashboard() {
   const flattenNFTs = (data) => {
     const tempProducts = []
     data.forEach(element => {
-      tempProducts.push(element.product)
+      const tempObj = element.product
+      if (tempObj) {
+        const clonedObj = JSON.parse(JSON.stringify(tempObj))
+        clonedObj.mintId = element.mintId
+        tempProducts.push(clonedObj)
+      }
     });
     return tempProducts
   }
@@ -64,60 +87,71 @@ export default function dashboard() {
   const [profileInfo, setProfileInfo] = useState([])
   useEffect(() => {
     getBrands((error, res) => {
-      setBrands(res.data)
-      console.log('error,res on getbrands---->', error, res)
+      if (res && res.data) {
+        setBrands(res.data)
+      }
     })
   }, [])
+
+
+
   useEffect(() => {
-    if (!token && !account) {
+
+    if (isInitialized && !token && !user) {
       toast.error("You should login/signup first");
       router.push('/login1')
     }
-    axios.get(`https://shop.totem-universe.io/users/myProfile`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-      .then(function (data) {
-        if (data.data) {
-          setProfileInfo(data.data.data.data)
-        }
+
+    if (token) {
+      getProfile((error, res) => {
+        setProfileInfo(res.data.data.data)
       })
+    }
     const fetchData = async () => {
-      const userEthNFTs = await Web3Api.account.getNFTs({ chain: "mumbai", address: account })
-      console.log("userEthNfts------->", userEthNFTs)
+      console.log('account', user.get('accounts')[0], user);
+      const userEthNFTs = await Web3Api.account.getNFTs({ chain: "polygon", limit: 99, address: user.get('accounts')[0], token_addresses: ["0xC212DD12cd6680797662019488d98aBb0BC65D6C"] })
+      console.log('userEthNFTs', userEthNFTs);
       setNfts([...userEthNFTs.result])
-      setLoading(false)
       return userEthNFTs;
     }
-    if (account) {
-      const result =  fetchData()
 
+
+    if (user && user.get('accounts')[0]) {
+      const result = fetchData()
     } else {
       getPurchasedProducts((error, res) => {
         if (res && res.data) {
           const result = flattenNFTs(res.data)
-          console.log('getPurchasedProducts result', result);
           setLoading(false)
           setFilteredNfts(result)
         }
 
       })
     }
-  }, [account])
+  }, [isAuthenticated, isInitialized])
 
   useEffect(() => {
-    if (nfts.length > 0) {
-      const filtered = nfts.filter((element) => {
-        return element.token_address.toUpperCase() === CONTRACT_ADDRESS.toUpperCase()
+    const filtered = nfts.filter((element) => {
+      return element && element.token_address.toUpperCase() === CONTRACT_ADDRESS.toUpperCase()
+    })
+    console.log("filtered--xx-->", filtered)
+    const ids = filtered.map((nft) => nft.token_id)
+    const amountList = filtered.map((nft) => Number(nft.amount))
+    getProductsByCollectionIds(ids.join(","), (error, res) => {
+      if (user && user.get('accounts')[0]) {
+        setLoading(false)
+      }
+      const tempList = []
+      for (let i = 0; i < res?.data.result.length; i++) {
+        const tempItem = res.data.result[0]
+        tempItem.amount = amountList[i]
+        for (let j = 0; j < amountList[i]; j++) {
+          tempList.push(tempItem)
+        }
+      }
 
-      })
-      const ids = filtered.map((nft) => nft.token_id)
-      console.log('ids', ids);
-      getProductsByCollectionIds(ids.join(","), (error, res) => {
-        setFilteredNfts(res.data.result)
-      })
-    }
+      setFilteredNfts(tempList)
+    })
   }, [nfts])
 
   useEffect(() => {
@@ -133,7 +167,7 @@ export default function dashboard() {
       }
 
     })
-    console.log(productsMap)
+
 
     let recordLength = 0
     let selectedBrandId = null
@@ -148,16 +182,21 @@ export default function dashboard() {
 
   useEffect(() => {
     const selectedBrand = brands[selectedBrandIndex]
-    const tempList = filteredNfts.filter((nft) => nft && nft.brandId && nft.brandId === selectedBrand._id)
+    const tempList = !shouldShowAll ? filteredNfts.filter((nft) => nft && nft.brandId && nft.brandId === selectedBrand._id) : filteredNfts
+    tempList.sort((x, y) => {
+      return new Date(x.createdAt) < new Date(y.createdAt) ? 1 : -1
+    })
     setBrandFilteredNfts(tempList)
   }, [filteredNfts, selectedBrandIndex])
+
+
   const confirmTransfer = async () => {
     if (handling) {
       return
     }
     setHandling(true)
     const finalParams = {
-      from: account,
+      from: user.get('accounts')[0],
       to: toAddress,
       id: selectedNft.collectionId,
       amount: 1,
@@ -199,7 +238,6 @@ export default function dashboard() {
   }
 
   const trandBrand = brands.find((brand) => brand._id === trandBrandId)
-
   return (
     <div>
       <div style={{ backgroundColor: "#0D0F23", color: "#919CC1", fontFamily: "Chakra Petch" }} className='text-sm w-full flex flex-col items-center'>
@@ -220,7 +258,7 @@ export default function dashboard() {
           </div>
 
           <div className='flex justify-end'>
-            <div className='w-full px-14 mt-10'>
+            <div className='w-full px-5 lg:px-14 mt-10'>
               <div className='flex text-base items-start lg:flex-row flex-col'>
                 <div className='text-md'>
                   <p className='text-white text-lg'>My collection value</p>
@@ -228,7 +266,7 @@ export default function dashboard() {
                     {loading && <p className='text-md relative p-3'>
                       <div className="ld ld-ring ld-spin text-white"></div>
                     </p>}
-                    {!loading && <p className='text-md'>{calcTotalPriceMatic(filteredNfts)}</p>}
+                    {!loading && <p className='text-md'>{parseFloat(calcTotalPriceMatic(filteredNfts)).toFixed(8)}</p>}
                     <Icon icon="mdi:ethereum" />
                   </div>
                   <div style={{ color: "#0EA8D6", fontFamily: "Poppins" }} className='flex items-center'>
@@ -277,52 +315,63 @@ export default function dashboard() {
                 </div>}
               </div>
               <div style={{ fontFamily: "Poppins" }} className='no-scrollbar mt-7 flex lg:flex-row flex-col overflow-x-scroll'>
+                <BrandContainer onClick={() => {
+                  setShouldShowAll(true)
+                  setSelectedBrandIndex(-1)
+                }}
+
+                  selected={shouldShowAll}>
+                  All
+                </BrandContainer>
                 {
                   brands.map((brand, index) => {
                     return (
-                      <BrandContainer key={index} onClick={() => { setSelectedBrandIndex(index) }} selected={selectedBrandIndex === index}>
+                      <BrandContainer key={index} onClick={() => {
+                        if (shouldShowAll) {
+
+                          setShouldShowAll(false)
+                        }
+                        setSelectedBrandIndex(index)
+                      }} selected={selectedBrandIndex === index}>
                         <p>{brand.name}</p>
                       </BrandContainer>
                     )
                   })
                 }
               </div>
-              <div className='flex flex-col lg:flex-row items-center mt-10'>
+              <div className='flex flex-col lg:flex-row items-center mt-10 flex-wrap'>
                 {!loading && brandFilteredNfts.length == 0 && <span className='text-2xl text-white font-bold'>No result</span>}
                 {brandFilteredNfts.map(function (data, index) {
                   return (
-                    <div key={index} style={{ background: "#161A42", width: "200px", height: "456px" }} className='mx-3 mt-0 w-full lg:w-max rounded-lg'>
+                    <div key={index} style={{ background: "#161A42", width: "200px", height: "456px" }} className='mx-3 mt-0 mb-5 w-full lg:w-max rounded-lg'>
                       <div style={{ borderRadius: '8px', height: "230px", width: '100%' }} className=' bg-white'>
-                        {/* <div className='relative top-2 left-2'>
-                          <Image height={20} width={60} src={bg}></Image>
-                        </div> */}
                         <div style={{ borderRadius: '8px', width: '100%', height: "100%" }} className=' flex justify-center items-center'>
                           <div className='h-60' style={{ position: "relative", width: '100%', height: "100%" }}>
                             {(!data?.image3D || data?.image3D.toLowerCase().includes("undefined")) && data?.imageUrl && <Image width={200} height={230} src={data?.imageUrl}></Image>}
-                            {data?.image3D && !data?.image3D.toLowerCase().includes("undefined") && <SingleModelView 
-                            modelUrl={data.image3D} 
-                            radius='8px' 
-                            zoom={0}
-                            isFitZoom={true}
-                            padding={{
-                              paddingTop: 0,
-                              paddingLeft: 0,
-                              paddingBottom: 0,
-                              paddingRight: 0
-                            }}
-                            isHasControl={false}/>}
+                            {data?.image3D && !data?.image3D.toLowerCase().includes("undefined") && <SingleModelView
+                              modelUrl={data.image3D}
+                              radius='8px'
+                              zoom={0}
+                              isFitZoom={true}
+                              padding={{
+                                paddingTop: 0,
+                                paddingLeft: 0,
+                                paddingBottom: 0,
+                                paddingRight: 0
+                              }}
+                              isHasControl={false} />}
                           </div>
                         </div>
                       </div>
                       <div className='flex justify-end'>
                         <div style={{ background: "#161A42", border: "2px solid #2E357B", width: "34px", height: "34px" }} className='relative flex justify-center items-center rounded-full bottom-7'>
-                          <Image src={bg}></Image>
+                          <Image src={categoryIcon[data?.thematics.toLowerCase()]}></Image>
                         </div>
                       </div>
                       <div className='p-3 relative bottom-7'>
                         <p className='text-lg text-white text-left line-clamp-2 h-14'>{data.name}</p>
 
-                        <div className='relative flex items-center mt-5'>
+                        <div className='relative flex items-center mt-3'>
                           <p className='text-white'>{data?.scaracity}</p>
                           <p className='absolute right-0 text-white'>{data?.series}</p>
                         </div>
@@ -333,22 +382,24 @@ export default function dashboard() {
                           <p style={{ color: "#0EA8D6" }} className='text-white text-2xl'>{data.priceUsd}$</p>
                           <p style={{ color: "#0EA8D6" }} className='ml-1 text-xs '>{parseFloat(data.priceMatic).toFixed(2)}</p>
                           <Image src={polygon1}></Image>
-                          <p className='absolute right-0 text-[10px]'>{data?.productNo}/{data?.maxCap}</p>
+                          {/* {
+                            account ? <p className='absolute right-0 text-[10px]'>{index + 1}/{data?.maxCap}</p> :
+                              <p className='absolute right-0 text-[10px]'>{data?.mintId}/{data?.maxCap}</p>
+                          } */}
+                          <p className='absolute right-0 text-[10px]'>{index + 1}/{data?.maxCap}</p>
                         </div>
 
                         <div style={{ border: '1px solid #2E357B' }} className="w-full mt-2">
                         </div>
                         <div className='flex'>
-                        <Link href={`/3d/${data._id}`}>
-                          <div className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900'>
-                            <p className='text-white  text-sm font-bold'>VIEW</p>
-                          </div>
+                          <Link href={`/3d/${data._id}`}>
+                            <div className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900'>
+                              <p className='text-white  text-sm font-bold'>VIEW</p>
+                            </div>
                           </Link>
-                          {/* {
-                          account && */}
                           <div style={{ borderLeft: '1px solid #2E357B' }}
-                            className='w-1/2 flex items-center justify-center py-2 cursor-pointer hover:bg-blue-900' onClick={() => { setSelectedNft(data); setShowTransferModal(true) }}>
-                            <p className='text-white text-sm font-bold'>SELL</p>
+                            className='w-1/2 flex items-center justify-center py-2' >
+                            <p className='text-gray-400 cursor-no-drop text-sm font-bold'>SELL</p>
                           </div>
                           {/* } */}
                         </div>
@@ -364,8 +415,8 @@ export default function dashboard() {
           <div className='flex justify-center items-center'>
             <div onClick={function () {
               router.push("/brands");
-            }} style={{ background: "#0EA8D6", width: "355px", borderRadius: '10px' }} className='cursor-pointer hover:opacity-80 mt-10 w-full h-10 flex justify-center items-center'>
-              <p style={{ color: "#161A42" }} className="font-bold text-xl">COMPLETE YOUR COLLECTION</p>
+            }} style={{ background: "#0EA8D6", borderRadius: '10px' }} className='cursor-pointer hover:opacity-80 mt-10 h-10 flex justify-center items-center'>
+              <p style={{ color: "#161A42" }} className="font-bold text-base lg:text-xl w-full px-5">COMPLETE YOUR COLLECTION</p>
             </div>
           </div>
           <br></br>
@@ -375,42 +426,6 @@ export default function dashboard() {
 
         </div>
       </div>
-
-      {/* <div style={{ fontFamily: "Chakra Petch", borderRadius: "26px", top: "0", left: "0", transform: 'translate(calc(50vw - 50%), calc(50vh - 50%))' }} className=' opacity-100 p-2 mx-auto fixed bg-white w-4/5 lg:w-96'>
-        <div className=' float-right'>
-          <CloseIcon />
-        </div>
-        <div className='flex flex-col items-center text-center mt-5' style={{ color: "#161a42" }}>
-          <p className='text-2xl'>Welcome,</p>
-          <div className='w-48'>
-            <p className='text-base'>You are officially a TOTEM digital figurine collector. Let’s spread the news !</p>
-          </div>
-        </div>
-        <div className='w-full flex justify-center mt-2'>
-          <Image width={94} height={145} src={human}></Image>
-        </div>
-        <div className=' flex justify-center mt-6'>
-          <div style={{ border: '2px solid #727698', opacity: "0.27" }} className='w-4/5'>
-          </div>
-        </div>
-        <div className='flex justify-center my-2' style={{ color: "#0EA8D6" }}>
-          <p className=''>Share your new collectible now:</p>
-        </div>
-        <div className='flex justify-center items-center'>
-          <div>
-            <Image width={30} height={30} src={fbBlue}></Image>
-          </div>
-          <div className='ml-2'>
-            <Image width={30} height={30} src={instaBlue}></Image>
-          </div>
-          <div className='ml-2'>
-            <Image width={30} height={30} src={twitterBlue}></Image>
-          </div>
-          <div className='ml-2'>
-            <Image width={30} height={30} src={tiktokBlue}></Image>
-          </div>
-        </div>
-      </div> */}
       {
         showTransferModal &&
         <Modal
